@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Threat Intelligence Feed — AutoPenTest Enterprise{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+  <div>
+    <h1 class="text-3xl font-bold text-cyber-green glow-green">🛡 Threat Intelligence</h1>
+    <p class="text-gray-400 mt-1">Live security news · CISA KEV · NVD CVEs</p>
+  </div>
+  <div class="text-right">
+    <p class="text-gray-500 text-sm">Last updated: <span class="text-gray-300">{{ updated_at }}</span></p>
+    <a href="/news?refresh=1" class="mt-2 inline-block bg-cyber-green/20 hover:bg-cyber-green/30
+       text-cyber-green px-4 py-1.5 rounded text-sm transition">↺ Refresh Feeds</a>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="flex gap-2 mb-6 border-b border-gray-700 pb-2">
+  <button onclick="showTab('tab-news')"    id="btn-news"    class="tab-btn active">📰 News Feed</button>
+  <button onclick="showTab('tab-kev')"     id="btn-kev"     class="tab-btn">🔴 CISA KEV</button>
+  <button onclick="showTab('tab-nvd')"     id="btn-nvd"     class="tab-btn">🗄 NVD CVEs</button>
+</div>
+
+<!-- ── NEWS FEED ─────────────────────────────────────────────────────────── -->
+<div id="tab-news">
+
+  <!-- Category filter chips -->
+  <div class="flex flex-wrap gap-2 mb-5" id="tag-filters">
+    <button onclick="filterTag('all')" data-tag="all"
+      class="tag-chip active text-xs px-3 py-1 rounded-full border border-cyber-green text-cyber-green">
+      All
+    </button>
+    {% set all_tags = [] %}
+    {% for item in news %}{% for t in item.tags %}{% if t not in all_tags %}{% set _ = all_tags.append(t) %}{% endif %}{% endfor %}{% endfor %}
+    {% for tag in all_tags | sort %}
+    <button onclick="filterTag('{{ tag }}')" data-tag="{{ tag }}"
+      class="tag-chip text-xs px-3 py-1 rounded-full border border-gray-600 text-gray-400 hover:border-cyber-green hover:text-cyber-green transition">
+      {{ tag }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div id="news-list" class="grid gap-4">
+    {% for item in news %}
+    <div class="news-card bg-gray-800/60 rounded-lg p-5 border border-gray-700 hover:border-cyber-green/50 transition"
+         data-tags="{{ item.tags | join(',') | lower }}">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1">
+          <div class="flex flex-wrap gap-1 mb-2">
+            <span class="text-xs px-2 py-0.5 rounded bg-gray-700 text-gray-400">{{ item.source }}</span>
+            {% for tag in item.tags[:4] %}
+            <span class="text-xs px-2 py-0.5 rounded font-semibold text-white
+              {% if tag in severity_colors %}{{ severity_colors[tag] }}{% else %}bg-gray-600{% endif %}">
+              {{ tag }}
+            </span>
+            {% endfor %}
+            {% if item.cves %}
+            {% for cve in item.cves[:2] %}
+            <span class="text-xs px-2 py-0.5 rounded bg-red-900/60 text-red-300 font-mono">{{ cve }}</span>
+            {% endfor %}
+            {% endif %}
+          </div>
+          <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer"
+             class="text-white font-semibold hover:text-cyber-green transition leading-snug">
+            {{ item.title }}
+          </a>
+          {% if item.summary %}
+          <p class="text-gray-400 text-sm mt-2 leading-relaxed">{{ item.summary[:200] }}{% if item.summary|length > 200 %}…{% endif %}</p>
+          {% endif %}
+        </div>
+        <div class="text-gray-600 text-xs whitespace-nowrap shrink-0">{{ item.date[:16] }}</div>
+      </div>
+    </div>
+    {% else %}
+    <p class="text-gray-500">No news items loaded.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ── CISA KEV ──────────────────────────────────────────────────────────── -->
+<div id="tab-kev" class="hidden">
+  <div class="bg-red-900/20 border border-red-700/40 rounded-lg p-4 mb-5">
+    <p class="text-red-400 font-semibold text-sm">⚠ CISA Known Exploited Vulnerabilities</p>
+    <p class="text-gray-400 text-sm mt-1">These vulnerabilities are <strong class="text-white">actively exploited in the wild</strong>.
+      US federal agencies are mandated to patch them. Prioritise immediately if relevant to your stack.</p>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-700 text-gray-400 text-left">
+          <th class="py-3 pr-4">CVE ID</th>
+          <th class="py-3 pr-4">Vendor / Product</th>
+          <th class="py-3 pr-4">Vulnerability</th>
+          <th class="py-3 pr-4">Tags</th>
+          <th class="py-3 pr-4">Added</th>
+          <th class="py-3">Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in cisa_kev %}
+        <tr class="border-b border-gray-800 hover:bg-gray-800/40 transition">
+          <td class="py-3 pr-4">
+            <a href="https://nvd.nist.gov/vuln/detail/{{ v.cve_id }}" target="_blank"
+               class="font-mono text-red-400 hover:text-red-300">{{ v.cve_id }}</a>
+            {% if v.ransomware == 'Known' %}
+            <span class="ml-1 text-xs bg-red-800 text-red-200 px-1.5 py-0.5 rounded">🦠 Ransomware</span>
+            {% endif %}
+          </td>
+          <td class="py-3 pr-4">
+            <span class="text-white">{{ v.vendor }}</span>
+            <span class="text-gray-500"> / {{ v.product }}</span>
+          </td>
+          <td class="py-3 pr-4 text-gray-300 max-w-xs">
+            <p class="font-semibold text-white">{{ v.name }}</p>
+            <p class="text-gray-400 text-xs mt-1">{{ v.description[:120] }}{% if v.description|length > 120 %}…{% endif %}</p>
+          </td>
+          <td class="py-3 pr-4">
+            {% for tag in v.tags[:3] %}
+            <span class="text-xs px-2 py-0.5 mr-1 rounded text-white
+              {% if tag in severity_colors %}{{ severity_colors[tag] }}{% else %}bg-gray-600{% endif %}">{{ tag }}</span>
+            {% endfor %}
+          </td>
+          <td class="py-3 pr-4 text-gray-400 text-xs font-mono">{{ v.date_added }}</td>
+          <td class="py-3 text-yellow-500 text-xs font-mono">{{ v.due_date }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="py-4 text-gray-500">Could not load CISA KEV data.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── NVD CVEs ──────────────────────────────────────────────────────────── -->
+<div id="tab-nvd" class="hidden">
+  <p class="text-gray-400 text-sm mb-4">Latest CVEs published to the National Vulnerability Database.</p>
+  <div class="grid gap-3">
+    {% for cve in nvd_recent %}
+    <div class="bg-gray-800/60 rounded-lg p-4 border border-gray-700 flex gap-4 items-start">
+      <div class="shrink-0 text-center w-20">
+        <div class="text-2xl font-bold
+          {% if cve.score >= 9.0 %}text-red-500
+          {% elif cve.score >= 7.0 %}text-orange-400
+          {% elif cve.score >= 4.0 %}text-yellow-400
+          {% else %}text-green-400{% endif %}">
+          {{ cve.score }}
+        </div>
+        <div class="text-xs text-gray-500 mt-0.5
+          {% if cve.severity == 'CRITICAL' %}text-red-500
+          {% elif cve.severity == 'HIGH' %}text-orange-400
+          {% elif cve.severity == 'MEDIUM' %}text-yellow-400
+          {% else %}text-green-400{% endif %}">
+          {{ cve.severity }}
+        </div>
+      </div>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1">
+          <a href="{{ cve.url }}" target="_blank" class="font-mono text-cyber-blue hover:text-cyber-blue/70">
+            {{ cve.cve_id }}
+          </a>
+          <span class="text-xs text-gray-600">{{ cve.published }}</span>
+          {% for tag in cve.tags[:3] %}
+          <span class="text-xs px-2 py-0.5 rounded text-white
+            {% if tag in severity_colors %}{{ severity_colors[tag] }}{% else %}bg-gray-600{% endif %}">
+            {{ tag }}
+          </span>
+          {% endfor %}
+        </div>
+        <p class="text-gray-300 text-sm">{{ cve.description }}</p>
+      </div>
+    </div>
+    {% else %}
+    <p class="text-gray-500">Could not load NVD data.</p>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+.tab-btn {
+  padding: 8px 18px; border-radius: 6px 6px 0 0; font-size: .875rem;
+  color: #9ca3af; background: transparent; cursor: pointer; border: none;
+  transition: color .15s, background .15s;
+}
+.tab-btn:hover { color: #fff; }
+.tab-btn.active { color: #00ff41; border-bottom: 2px solid #00ff41; font-weight: 600; }
+</style>
+
+<script>
+function showTab(id) {
+  ['tab-news','tab-kev','tab-nvd'].forEach(t => {
+    document.getElementById(t).classList.add('hidden');
+  });
+  ['btn-news','btn-kev','btn-nvd'].forEach(b => {
+    document.getElementById(b).classList.remove('active');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  document.getElementById(id.replace('tab-','btn-')).classList.add('active');
+}
+
+function filterTag(tag) {
+  document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('active','text-cyber-green','border-cyber-green'));
+  const btn = document.querySelector(`[data-tag="${tag}"]`);
+  if (btn) {
+    btn.classList.add('active','text-cyber-green','border-cyber-green');
+    btn.classList.remove('text-gray-400','border-gray-600');
+  }
+  document.querySelectorAll('.news-card').forEach(card => {
+    if (tag === 'all') { card.style.display = ''; return; }
+    const tags = (card.dataset.tags || '').toLowerCase().split(',');
+    card.style.display = tags.includes(tag.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// Auto-refresh every 30 minutes
+setTimeout(() => location.reload(), 30 * 60 * 1000);
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}AutoPenTest Enterprise{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: { extend: { colors: {
+      'cyber-green': '#00ff41',
+      'cyber-blue':  '#00b4d8',
+      'cyber-red':   '#ff003c',
+    }}}
+  }
+</script>
+<style>
+  body { background: #0a0e17; color: #c9d1d9; font-family: 'Segoe UI', monospace; }
+  .terminal { background: #0d1117; border: 1px solid #30363d; font-family: 'Courier New', monospace; }
+  .glow-green { text-shadow: 0 0 10px #00ff41; }
+  .glow-red   { text-shadow: 0 0 10px #ff003c; }
+  .glow-blue  { text-shadow: 0 0 10px #00b4d8; }
+  .badge-critical { background:#7f1d1d; color:#fca5a5; }
+  .badge-high     { background:#7c2d12; color:#fdba74; }
+  .badge-medium   { background:#713f12; color:#fde68a; }
+  .badge-low      { background:#14532d; color:#86efac; }
+  .badge-info     { background:#1e3a5f; color:#93c5fd; }
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .pulse-dot { animation: pulse-dot 1.5s infinite; }
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:#0d1117; }
+  ::-webkit-scrollbar-thumb { background:#30363d; border-radius:3px; }
+</style>
+</head>
+<body>
+<nav class="border-b border-gray-800 px-6 py-3 flex items-center justify-between">
+  <a href="/" class="flex items-center gap-2">
+    <span class="text-2xl">🔐</span>
+    <span class="font-bold text-lg text-cyber-green glow-green">AutoPenTest</span>
+    <span class="text-gray-500 text-sm ml-2">Enterprise Security Scanner</span>
+  </a>
+  <div class="flex gap-4 text-sm text-gray-400 items-center">
+    <a href="/" class="hover:text-white transition">Dashboard</a>
+    <a href="/trends" class="hover:text-white transition">Trends</a>
+    <a href="/news" class="hover:text-white transition">🛡 Threat Feed</a>
+    <span class="text-gray-700">|</span>
+    <span class="text-yellow-500">⚠ Authorized testing only</span>
+    <span class="text-gray-700">|</span>
+    <a href="/logout" class="hover:text-red-400 transition text-gray-500">Logout</a>
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="max-w-6xl mx-auto px-4 pt-4">
+  {% for category, message in messages %}
+  <div class="mb-2 px-4 py-3 rounded-lg text-sm
+    {% if category == 'error' %}bg-red-900/30 border border-red-700 text-red-400
+    {% else %}bg-green-900/30 border border-green-700 text-green-400{% endif %}">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+  {% block content %}{% endblock %}
+</div>
+</body>
+</html>

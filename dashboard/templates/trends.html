@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Trends — AutoPenTest Enterprise{% endblock %}
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <a href="/" class="text-gray-500 hover:text-white text-sm transition">← Dashboard</a>
+    <h1 class="text-2xl font-bold text-white mt-1">📈 Trend Analysis</h1>
+    <p class="text-gray-400 text-sm mt-1">Historical scan comparison & risk evolution</p>
+  </div>
+</div>
+
+{% if not scans %}
+<div class="terminal rounded-xl p-12 text-center text-gray-600">
+  <div class="text-5xl mb-3">📊</div>
+  <p>No completed scans yet. Run scans to see trend data.</p>
+</div>
+
+{% else %}
+
+<!-- Summary Stats -->
+<div class="grid grid-cols-4 gap-4 mb-6">
+  <div class="terminal rounded-xl p-4 text-center">
+    <div class="text-3xl font-bold text-white">{{ scans | length }}</div>
+    <div class="text-xs text-gray-500 mt-1">Total Scans</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center">
+    <div class="text-3xl font-bold text-red-400">
+      {{ scans | selectattr('risk_rating', 'equalto', 'Critical') | list | length }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">Critical Risk</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center">
+    <div class="text-3xl font-bold text-green-400">
+      {{ scans | selectattr('risk_rating', 'equalto', 'Low') | list | length }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">Low Risk</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center">
+    <div class="text-3xl font-bold text-cyber-blue">
+      {{ scans | sum(attribute='total_findings') }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">Total Findings</div>
+  </div>
+</div>
+
+<!-- Risk Distribution Chart (CSS-based) -->
+<div class="terminal rounded-xl p-6 mb-6">
+  <h2 class="text-white font-bold text-lg mb-4">🎯 Risk Distribution</h2>
+  {% set risk_counts = {} %}
+  {% for scan in scans %}
+    {% if scan.risk_rating %}
+      {% set _ = risk_counts.update({scan.risk_rating: risk_counts.get(scan.risk_rating, 0) + 1}) %}
+    {% endif %}
+  {% endfor %}
+  <div class="flex items-end gap-2 h-32">
+    {% for risk, count in [('Critical', risk_counts.get('Critical', 0)),
+                            ('High',     risk_counts.get('High',     0)),
+                            ('Medium',   risk_counts.get('Medium',   0)),
+                            ('Low',      risk_counts.get('Low',      0))] %}
+    {% set max_c = [risk_counts.get('Critical',0), risk_counts.get('High',0),
+                    risk_counts.get('Medium',0), risk_counts.get('Low',0)] | max %}
+    {% set bar_h = (count / (max_c if max_c > 0 else 1) * 100) | int %}
+    <div class="flex flex-col items-center flex-1">
+      <div class="text-xs text-gray-400 mb-1">{{ count }}</div>
+      <div class="w-full rounded-t transition-all
+           {% if risk == 'Critical' %}bg-red-600
+           {% elif risk == 'High' %}bg-orange-600
+           {% elif risk == 'Medium' %}bg-yellow-600
+           {% else %}bg-green-600{% endif %}"
+           style="height: {{ bar_h }}%"></div>
+      <div class="text-xs text-gray-500 mt-1">{{ risk }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Scan Timeline -->
+<div class="terminal rounded-xl p-6">
+  <h2 class="text-white font-bold text-lg mb-4">🕒 Scan History</h2>
+  <div class="space-y-3">
+    {% for scan in scans | reverse %}
+    <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="text-2xl">
+          {% set r = scan.risk_rating | lower if scan.risk_rating else 'low' %}
+          {% if r == 'critical' %}🔴
+          {% elif r == 'high' %}🟠
+          {% elif r == 'medium' %}🟡
+          {% else %}🟢{% endif %}
+        </div>
+        <div>
+          <div class="text-white font-mono text-sm">{{ scan.url }}</div>
+          <div class="text-gray-500 text-xs">
+            {{ scan.started_at[:16] | replace('T', ' ') }} UTC
+            · {{ scan.total_findings or 0 }} finding(s)
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        {% if scan.risk_rating %}
+        <span class="px-3 py-1 rounded text-xs font-bold
+          {% if r == 'critical' %}badge-critical
+          {% elif r == 'high' %}badge-high
+          {% elif r == 'medium' %}badge-medium
+          {% else %}badge-low{% endif %}">
+          {{ scan.risk_rating }}
+        </span>
+        {% endif %}
+        <a href="/scan/{{ scan.id }}"
+           class="text-xs bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-gray-300 transition">
+          View
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endif %}
+{% endblock %}

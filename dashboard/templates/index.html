@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}AutoPenTest — Dashboard{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<div class="text-center mb-10">
+  <h1 class="text-4xl font-bold text-cyber-green glow-green mb-2">AutoPenTest Enterprise</h1>
+  <p class="text-gray-400">Nmap · Nikto · SQLMap · OWASP ZAP · SSL/TLS · CORS · WAF · API · AI Analysis</p>
+</div>
+
+<!-- Scan Form -->
+<div class="terminal rounded-xl p-8 mb-8 max-w-2xl mx-auto">
+  <h2 class="text-cyber-blue font-bold text-lg mb-4 glow-blue">🎯 Start New Scan</h2>
+  <form method="POST" action="/scan" id="scanForm">
+    <div class="flex gap-3 mb-4">
+      <input type="text" name="url" id="urlInput"
+             placeholder="https://target-site.com"
+             class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white
+                    placeholder-gray-600 focus:outline-none focus:border-cyber-blue focus:ring-1
+                    focus:ring-cyber-blue transition"
+             required>
+      <button type="submit"
+              class="bg-cyber-green text-black font-bold px-6 py-3 rounded-lg
+                     hover:bg-green-400 transition flex items-center gap-2"
+              id="scanBtn">
+        <span>▶</span> Scan
+      </button>
+    </div>
+    <label class="flex items-start gap-3 text-sm text-gray-400 cursor-pointer">
+      <input type="checkbox" required class="mt-1 accent-cyber-green">
+      <span>I confirm I have <strong class="text-white">written authorization</strong>
+            to test this target. I accept all legal responsibility.</span>
+    </label>
+  </form>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <span class="text-xs text-gray-600">Quick test targets:</span>
+    <button onclick="setUrl('http://testphp.vulnweb.com')"
+            class="text-xs bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded text-gray-300 transition">
+      testphp.vulnweb.com
+    </button>
+    <button onclick="setUrl('http://localhost:5000')"
+            class="text-xs bg-gray-800 hover:bg-gray-700 px-2 py-1 rounded text-gray-300 transition">
+      localhost:5000 (built-in)
+    </button>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="bg-yellow-900/20 border border-yellow-800 rounded-lg p-4 mb-8 max-w-2xl mx-auto">
+  <p class="text-yellow-400 text-sm">
+    ⚠️ <strong>Legal Notice:</strong> Only scan systems you own or have explicit written permission to test.
+    Unauthorized scanning is illegal under the Computer Fraud and Abuse Act and similar laws worldwide.
+  </p>
+</div>
+
+<!-- Scan History -->
+{% if scans %}
+<div class="terminal rounded-xl p-6">
+  <h2 class="text-white font-bold text-lg mb-4">📋 Scan History</h2>
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-800 text-gray-400">
+          <th class="text-left py-2 pr-4">ID</th>
+          <th class="text-left py-2 pr-4">Target</th>
+          <th class="text-left py-2 pr-4">Status</th>
+          <th class="text-left py-2 pr-4">Risk</th>
+          <th class="text-left py-2 pr-4">Findings</th>
+          <th class="text-left py-2 pr-4">Started</th>
+          <th class="text-left py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for scan in scans %}
+        <tr class="border-b border-gray-900 hover:bg-gray-900/50 transition">
+          <td class="py-3 pr-4 font-mono text-cyber-blue">{{ scan.id }}</td>
+          <td class="py-3 pr-4 text-white max-w-xs truncate">{{ scan.url }}</td>
+          <td class="py-3 pr-4">
+            {% if scan.status == 'complete' %}
+              <span class="text-green-400">✓ Complete</span>
+            {% elif scan.status == 'running' %}
+              <span class="text-yellow-400 pulse-dot">⟳ Running</span>
+            {% elif scan.status == 'error' %}
+              <span class="text-red-400">✗ Error</span>
+            {% elif scan.status == 'cancelled' %}
+              <span class="text-gray-400">⊘ Cancelled</span>
+            {% else %}
+              <span class="text-gray-400">{{ scan.status }}</span>
+            {% endif %}
+          </td>
+          <td class="py-3 pr-4">
+            {% if scan.risk_rating %}
+              {% set r = scan.risk_rating | lower %}
+              <span class="px-2 py-1 rounded text-xs font-bold
+                {% if r == 'critical' %}badge-critical
+                {% elif r == 'high' %}badge-high
+                {% elif r == 'medium' %}badge-medium
+                {% else %}badge-low{% endif %}">
+                {{ scan.risk_rating }}
+              </span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="py-3 pr-4 text-white">{{ scan.total_findings or '—' }}</td>
+          <td class="py-3 pr-4 text-gray-500 text-xs">{{ scan.started_at[:16] | replace('T',' ') }}</td>
+          <td class="py-3">
+            <div class="flex gap-2">
+              <a href="/scan/{{ scan.id }}"
+                 class="text-xs bg-gray-800 hover:bg-gray-700 px-3 py-1 rounded text-gray-300 transition">
+                View
+              </a>
+              {% if scan.report_html %}
+              <a href="/scan/{{ scan.id }}/report"
+                 class="text-xs bg-blue-900 hover:bg-blue-800 px-3 py-1 rounded text-blue-300 transition"
+                 target="_blank">
+                Report
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="terminal rounded-xl p-12 text-center text-gray-600">
+  <div class="text-5xl mb-3">🔍</div>
+  <p>No scans yet. Enter a target URL above to begin.</p>
+</div>
+{% endif %}
+
+<script>
+  function setUrl(url) {
+    document.getElementById('urlInput').value = url;
+  }
+  document.getElementById('scanForm').addEventListener('submit', function() {
+    document.getElementById('scanBtn').textContent = '⟳ Starting...';
+    document.getElementById('scanBtn').disabled = true;
+  });
+</script>
+{% endblock %}

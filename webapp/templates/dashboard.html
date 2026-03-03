@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Dashboard</h2>
+<p>Logged in as <strong>{{ user }}</strong> (role: {{ role }})</p>
+<h3>All Users (IDOR demo)</h3>
+<table>
+  <tr><th>ID</th><th>Username</th><th>Role</th><th>Action</th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.role }}</td>
+    <td><a href="/profile/{{ u.id }}">View Profile</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

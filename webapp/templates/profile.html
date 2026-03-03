@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<h2>User Profile</h2>
+<!-- VULNERABILITY: exposes sensitive user data without ownership check (IDOR) -->
+<table>
+  <tr><th>Field</th><th>Value</th></tr>
+  <tr><td>ID</td><td>{{ target.id }}</td></tr>
+  <tr><td>Username</td><td>{{ target.username }}</td></tr>
+  <tr><td>Email</td><td>{{ target.email }}</td></tr>
+  <tr><td>Role</td><td>{{ target.role }}</td></tr>
+  <tr><td>Password (exposed!)</td><td>{{ target.password }}</td></tr>
+</table>
+<p><a href="/dashboard">← Back</a></p>
+{% endblock %}

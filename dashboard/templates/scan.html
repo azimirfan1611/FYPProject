@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+{% block title %}Scan {{ scan.id }} — AutoPenTest{% endblock %}
+{% block content %}
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <a href="/" class="text-gray-500 hover:text-white text-sm transition">← Dashboard</a>
+    <h1 class="text-2xl font-bold text-white mt-1">
+      Scan <span class="text-cyber-blue font-mono">{{ scan.id }}</span>
+    </h1>
+    <p class="text-gray-400 text-sm mt-1">🎯 {{ scan.url }}</p>
+  </div>
+  <div class="flex gap-3">
+    {% if scan.status == 'running' %}
+    <form method="POST" action="/scan/{{ scan.id }}/cancel">
+      <button class="bg-red-900 hover:bg-red-800 text-red-300 px-4 py-2 rounded text-sm transition">
+        ⊘ Cancel
+      </button>
+    </form>
+    {% endif %}
+    {% if scan.report_html %}
+    <a href="/scan/{{ scan.id }}/report" target="_blank"
+       class="bg-cyber-blue/20 hover:bg-cyber-blue/30 text-cyber-blue px-4 py-2 rounded text-sm transition">
+      📄 Full Report
+    </a>
+    <a href="/scan/{{ scan.id }}/download/json"
+       class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded text-sm transition">
+      ⬇ JSON
+    </a>
+    <a href="/scan/{{ scan.id }}/download/sarif"
+       class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded text-sm transition">
+      ⬇ SARIF
+    </a>
+    <a href="/scan/{{ scan.id }}/download/pdf"
+       class="bg-gray-800 hover:bg-gray-700 text-gray-300 px-4 py-2 rounded text-sm transition">
+      ⬇ PDF
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Status Card -->
+<div class="terminal rounded-xl p-6 mb-6" id="statusCard">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-3">
+      <span id="statusIcon" class="text-2xl">
+        {% if scan.status == 'complete' %}✅
+        {% elif scan.status == 'error' %}❌
+        {% elif scan.status == 'cancelled' %}⊘
+        {% else %}⟳{% endif %}
+      </span>
+      <div>
+        <div class="font-bold text-white" id="phaseText">{{ scan.phase }}</div>
+        <div class="text-sm text-gray-400">
+          Started: {{ scan.started_at[:16] | replace('T',' ') }} UTC
+          {% if scan.completed_at %}
+            · Finished: {{ scan.completed_at[:16] | replace('T',' ') }} UTC
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div id="riskBadge" class="text-right">
+      {% if scan.risk_rating %}
+        {% set r = scan.risk_rating | lower %}
+        <span class="px-4 py-2 rounded-lg text-sm font-bold
+          {% if r == 'critical' %}badge-critical
+          {% elif r == 'high' %}badge-high
+          {% elif r == 'medium' %}badge-medium
+          {% else %}badge-low{% endif %}">
+          {{ scan.risk_rating }} RISK
+        </span>
+      {% endif %}
+    </div>
+  </div>
+  <!-- Progress bar -->
+  <div class="bg-gray-800 rounded-full h-2">
+    <div id="progressBar"
+         class="bg-cyber-green h-2 rounded-full transition-all duration-500"
+         style="width: {{ scan.progress_pct }}%"></div>
+  </div>
+  <div class="text-xs text-gray-500 mt-1 text-right" id="progressPct">{{ scan.progress_pct }}%</div>
+</div>
+
+<!-- Stats (shown when complete) -->
+<div id="statsRow" class="grid grid-cols-4 gap-4 mb-6
+     {{ 'hidden' if not scan.total_findings else '' }}">
+  <div class="terminal rounded-xl p-4 text-center border-t-2 border-red-700">
+    <div class="text-3xl font-bold text-red-400" id="statCritical">
+      {{ scan.analysis.critical_count if scan.analysis else 0 }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">CRITICAL</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center border-t-2 border-orange-700">
+    <div class="text-3xl font-bold text-orange-400" id="statHigh">
+      {{ scan.analysis.high_count if scan.analysis else 0 }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">HIGH</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center border-t-2 border-yellow-700">
+    <div class="text-3xl font-bold text-yellow-400" id="statMedium">
+      {{ scan.analysis.medium_count if scan.analysis else 0 }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">MEDIUM</div>
+  </div>
+  <div class="terminal rounded-xl p-4 text-center border-t-2 border-green-700">
+    <div class="text-3xl font-bold text-green-400" id="statLow">
+      {{ scan.analysis.low_count if scan.analysis else 0 }}
+    </div>
+    <div class="text-xs text-gray-500 mt-1">LOW</div>
+  </div>
+</div>
+
+<!-- Two-column: logs + report summary -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <!-- Live Log Terminal -->
+  <div class="terminal rounded-xl p-4">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-3 h-3 rounded-full bg-red-500"></div>
+      <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+      <div class="w-3 h-3 rounded-full bg-green-500"></div>
+      <span class="text-gray-500 text-xs ml-2">scan.log</span>
+      {% if scan.status == 'running' %}
+      <span class="ml-auto text-xs text-yellow-400 pulse-dot">● LIVE</span>
+      {% endif %}
+    </div>
+    <div id="logBox"
+         class="h-96 overflow-y-auto text-xs text-green-400 leading-relaxed space-y-0.5"
+         style="font-family: 'Courier New', monospace">
+      {% for line in scan.logs %}
+      <div class="{% if '[!]' in line %}text-red-400{% elif '[*]' in line %}text-cyber-blue
+                  {% elif '[✓]' in line or '→' in line %}text-green-400
+                  {% elif '===' in line %}text-yellow-400 font-bold
+                  {% else %}text-gray-400{% endif %}">{{ line }}</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- AI Summary / Findings -->
+  <div class="terminal rounded-xl p-4">
+    <h3 class="text-white font-bold mb-3">🤖 AI Analysis Summary</h3>
+    {% if scan.analysis and scan.analysis.executive_summary %}
+    <p class="text-gray-300 text-sm mb-4 leading-relaxed">
+      {{ scan.analysis.executive_summary }}
+    </p>
+    {% if scan.analysis.top_priorities %}
+    <h4 class="text-cyber-blue text-sm font-bold mb-2">⚡ Top Priorities</h4>
+    <ul class="space-y-2 mb-4">
+      {% for p in scan.analysis.top_priorities %}
+      <li class="text-sm text-gray-300 bg-blue-900/20 border border-blue-900 rounded px-3 py-2">
+        {{ p }}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% if scan.analysis.findings_analysis %}
+    <h4 class="text-cyber-blue text-sm font-bold mb-2">🔍 Vulnerabilities Found</h4>
+    <div class="space-y-2 max-h-52 overflow-y-auto">
+      {% for fa in scan.analysis.findings_analysis %}
+      <div class="bg-gray-900 rounded px-3 py-2 text-xs">
+        <div class="flex justify-between items-center">
+          <span class="text-white font-semibold">{{ fa.type }}</span>
+          <span class="{% if fa.cvss_score >= 9 %}text-red-400
+                       {% elif fa.cvss_score >= 7 %}text-orange-400
+                       {% elif fa.cvss_score >= 4 %}text-yellow-400
+                       {% else %}text-green-400{% endif %} font-mono">
+            CVSS {{ fa.cvss_score }}
+          </span>
+        </div>
+        <p class="text-gray-400 mt-1">{{ fa.attack_scenario[:100] }}...</p>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="mt-4">
+      <a href="/scan/{{ scan.id }}/report" target="_blank"
+         class="w-full block text-center bg-cyber-green text-black font-bold py-2 rounded
+                hover:bg-green-400 transition text-sm">
+        📊 View Full Report
+      </a>
+    </div>
+    {% elif scan.status == 'running' %}
+    <div class="flex flex-col items-center justify-center h-64 text-gray-600">
+      <div class="text-5xl mb-3 pulse-dot">🔍</div>
+      <p>Scanning in progress...</p>
+      <p class="text-xs mt-2" id="phaseHint">{{ scan.phase }}</p>
+    </div>
+    {% else %}
+    <div class="flex flex-col items-center justify-center h-64 text-gray-600">
+      <div class="text-5xl mb-3">⏳</div>
+      <p>Waiting for scan to complete...</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script>
+const scanId    = "{{ scan.id }}";
+const initStatus = "{{ scan.status }}";
+let logOffset   = {{ scan.logs | length }};
+let pollTimer   = null;
+
+function severityColor(s) {
+  const m = {'CRITICAL':'text-red-400','HIGH':'text-orange-400',
+             'MEDIUM':'text-yellow-400','LOW':'text-green-400'};
+  return m[s] || 'text-gray-400';
+}
+
+function logClass(line) {
+  if (line.includes('[!]'))  return 'text-red-400';
+  if (line.includes('[*]'))  return 'text-cyber-blue';
+  if (line.includes('[✓]') || line.includes('→')) return 'text-green-400';
+  if (line.includes('===')) return 'text-yellow-400 font-bold';
+  return 'text-gray-400';
+}
+
+async function fetchLogs() {
+  try {
+    const r = await fetch(`/scan/${scanId}/logs?offset=${logOffset}`);
+    const lines = await r.json();
+    if (lines.length > 0) {
+      const box = document.getElementById('logBox');
+      lines.forEach(line => {
+        const d = document.createElement('div');
+        d.className = logClass(line);
+        d.textContent = line;
+        box.appendChild(d);
+      });
+      logOffset += lines.length;
+      box.scrollTop = box.scrollHeight;
+    }
+  } catch(e) {}
+}
+
+async function fetchStatus() {
+  try {
+    const r  = await fetch(`/scan/${scanId}/status`);
+    const st = await r.json();
+
+    // Update progress bar
+    document.getElementById('progressBar').style.width = st.progress_pct + '%';
+    document.getElementById('progressPct').textContent = st.progress_pct + '%';
+    document.getElementById('phaseText').textContent   = st.phase;
+
+    // Update risk badge
+    if (st.risk_rating) {
+      const cls = {'Critical':'badge-critical','High':'badge-high',
+                   'Medium':'badge-medium','Low':'badge-low'}[st.risk_rating] || 'badge-low';
+      document.getElementById('riskBadge').innerHTML =
+        `<span class="px-4 py-2 rounded-lg text-sm font-bold ${cls}">${st.risk_rating} RISK</span>`;
+    }
+
+    if (st.status !== 'running') {
+      clearInterval(pollTimer);
+      document.getElementById('statusIcon').textContent =
+        st.status === 'complete' ? '✅' : st.status === 'error' ? '❌' : '⊘';
+
+      if (st.has_report) {
+        setTimeout(() => location.reload(), 1000);
+      }
+    }
+  } catch(e) {}
+}
+
+if (initStatus === 'running') {
+  pollTimer = setInterval(async () => {
+    await fetchLogs();
+    await fetchStatus();
+  }, 2000);
+}
+
+// Auto-scroll log on load
+window.addEventListener('load', () => {
+  const box = document.getElementById('logBox');
+  box.scrollTop = box.scrollHeight;
+});
+</script>
+{% endblock %}

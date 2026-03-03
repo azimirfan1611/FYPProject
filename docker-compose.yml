@@ -1,0 +1,81 @@
+version: '3.9'
+
+# ZAP API key — generate with: python -c "import secrets; print(secrets.token_hex(16))"
+# Set ZAP_KEY in your .env file or environment. Default shown here is INSECURE.
+x-zap-key: &zap-key ${ZAP_KEY:-autopentest_changeme_key}
+
+services:
+
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    container_name: vulnapp
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_PATH=/tmp/webapp.db
+      - FLASK_ENV=development
+    networks:
+      - pentest-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: zap
+    command: >
+      zap.sh -daemon
+      -host 0.0.0.0 -port 8090
+      -config api.addrs.addr.name=.*
+      -config api.addrs.addr.regex=true
+      -config api.key=${ZAP_KEY:-autopentest_changeme_key}
+      -config scanner.threadPerHost=5
+    environment:
+      - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
+    # ZAP port NOT exposed to host — accessible only within pentest-net
+    expose:
+      - "8090"
+    networks:
+      - pentest-net
+    healthcheck:
+      test: ["CMD", "curl", "-sf",
+             "http://localhost:8090/JSON/core/view/version/?apikey=${ZAP_KEY:-autopentest_changeme_key}"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    container_name: pentest_dashboard
+    ports:
+      - "8080:8080"
+    environment:
+      - ZAP_URL=http://zap:8090
+      - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - REPORT_DIR=/reports
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASS=${ADMIN_PASS:-changeme123!}
+      - JWT_SECRET=${JWT_SECRET:-}
+      - SHODAN_API_KEY=${SHODAN_API_KEY:-}
+      - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY:-}
+      - RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-60}
+      - SCAN_LIMIT_PER_MIN=${SCAN_LIMIT_PER_MIN:-3}
+    volumes:
+      - ./reports:/reports
+    networks:
+      - pentest-net
+    depends_on:
+      - zap
+
+networks:
+  pentest-net:
+    driver: bridge

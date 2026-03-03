@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Comments{% endblock %}
+{% block content %}
+<h2>Comments</h2>
+<!-- VULNERABILITY: no CSRF token on form -->
+<form method="POST">
+  <label>Your name</label>
+  <input type="text" name="author" value="">
+  <label>Comment</label>
+  <textarea name="body" rows="3" placeholder="Try: <script>alert(1)</script>"></textarea>
+  <input type="submit" value="Post">
+</form>
+<hr>
+{% for c in comments %}
+<div style="border-bottom:1px solid #eee;margin:10px 0;padding:10px">
+  <strong>{{ c.author }}</strong> <small>{{ c.created }}</small>
+  <!-- VULNERABILITY: body rendered unescaped → Stored XSS -->
+  <p>{{ c.body | safe }}</p>
+</div>
+{% endfor %}
+{% endblock %}

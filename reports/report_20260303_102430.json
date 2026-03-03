@@ -1,0 +1,50 @@
+{
+  "target": "http://testhtml5.vulnweb.com/#/popular",
+  "date": "20260303_102430",
+  "analysis": {
+    "executive_summary": "The assessment identified 2 findings across 1 vulnerability categories. The overall risk is rated Low. Immediate remediation is required for critical and high severity issues.",
+    "risk_rating": "Low",
+    "total_findings": 2,
+    "critical_count": 0,
+    "high_count": 0,
+    "medium_count": 0,
+    "low_count": 2,
+    "findings_analysis": [
+      {
+        "type": "SQLMap SQL Injection",
+        "cvss_score": 3.1,
+        "cvss_vector": "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "attack_scenario": "Attacker exploits SQLMap SQL Injection at http://testhtml5.vulnweb.com/#/popular/login using payload: POST username/password",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Use parameterised queries or prepared statements",
+          "Apply input validation and allowlisting",
+          "Use an ORM with built-in sanitisation",
+          "Implement WAF rules for SQLi patterns"
+        ]
+      }
+    ],
+    "top_priorities": [
+      "Immediately fix SQL injection and command injection vulnerabilities",
+      "Sanitise all output to prevent XSS attacks",
+      "Implement proper authentication controls and hashing"
+    ],
+    "positive_findings": []
+  },
+  "findings": [
+    {
+      "type": "SQLMap SQL Injection",
+      "endpoint": "http://testhtml5.vulnweb.com/#/popular/login",
+      "payload": "POST username/password",
+      "evidence": "sqlmap binary not found in container",
+      "severity": "LOW"
+    },
+    {
+      "type": "SQLMap SQL Injection",
+      "endpoint": "http://testhtml5.vulnweb.com/#/popular/search",
+      "payload": "GET q parameter",
+      "evidence": "sqlmap binary not found in container",
+      "severity": "LOW"
+    }
+  ]
+}

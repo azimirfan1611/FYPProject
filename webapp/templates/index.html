@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Welcome to VulnApp</h1>
+<p>An intentionally vulnerable web application for security testing.</p>
+<table>
+  <tr><th>Endpoint</th><th>Vulnerability</th></tr>
+  <tr><td><a href="/login">/login</a></td><td>SQL Injection, Info Disclosure</td></tr>
+  <tr><td><a href="/search">/search</a></td><td>Reflected XSS, SQL Injection</td></tr>
+  <tr><td><a href="/comments">/comments</a></td><td>Stored XSS, CSRF</td></tr>
+  <tr><td><a href="/profile/1">/profile/&lt;id&gt;</a></td><td>IDOR</td></tr>
+  <tr><td><a href="/ping">/ping</a></td><td>Command Injection</td></tr>
+  <tr><td><a href="/files">/files</a></td><td>Path Traversal</td></tr>
+  <tr><td><a href="/api/user/1">/api/user/&lt;id&gt;</a></td><td>Unauthenticated API, Data Exposure</td></tr>
+</table>
+{% endblock %}

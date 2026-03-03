@@ -1,0 +1,650 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Penetration Test Report</title>
+<style>
+  body{font-family:'Segoe UI',Arial,sans-serif;margin:0;background:#f0f2f5;color:#2c3e50}
+  header{background:#1a252f;color:#fff;padding:30px 40px}
+  header h1{margin:0;font-size:2em}
+  header p{margin:5px 0;opacity:.75}
+  .content{max-width:1100px;margin:30px auto;padding:0 20px}
+  .card{background:#fff;border-radius:8px;padding:25px;margin-bottom:25px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.8em;font-weight:bold;color:#fff}
+  .critical{background:#c0392b} .high{background:#e67e22}
+  .medium{background:#f39c12;color:#fff} .low{background:#27ae60}
+  .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin:20px 0}
+  .stat-box{background:#1a252f;color:#fff;border-radius:8px;padding:20px;text-align:center}
+  .stat-box .num{font-size:2.5em;font-weight:bold}
+  .stat-box .lbl{font-size:.9em;opacity:.75}
+  .finding{border-left:5px solid #ccc;padding:15px 20px;margin:15px 0;background:#fafafa;border-radius:0 6px 6px 0}
+  .finding h3{margin:0 0 8px}
+  .finding code{background:#ecf0f1;padding:2px 6px;border-radius:3px;font-family:monospace;font-size:.9em;word-break:break-all}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  th{background:#34495e;color:#fff;padding:10px 15px;text-align:left}
+  td{padding:10px 15px;border-bottom:1px solid #eee}
+  tr:hover td{background:#f8f9fa}
+  ul{margin:8px 0;padding-left:20px}
+  li{margin:4px 0}
+  .priority{background:#2980b9;color:#fff;padding:10px 15px;border-radius:6px;margin:8px 0}
+  .exec-summary{background:linear-gradient(135deg,#1a252f,#2c3e50);color:#fff;padding:25px;border-radius:8px;line-height:1.7}
+  footer{text-align:center;padding:20px;color:#999;font-size:.85em}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔐 Penetration Test Report</h1>
+  <p>Target: <strong>http://webapp:5000</strong></p>
+  <p>Date: 2026-03-03 08:09:55 &nbsp;|&nbsp; Overall Risk: <span class="badge critical">Critical</span></p>
+</header>
+<div class="content">
+
+  <div class="card exec-summary">
+    <h2 style="margin-top:0;color:#fff">Executive Summary</h2>
+    <p>The assessment identified 56 findings across 10 vulnerability categories. The overall risk is rated Critical. Immediate remediation is required for critical and high severity issues.</p>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-box" style="border-top:4px solid #c0392b">
+      <div class="num">13</div>
+      <div class="lbl">CRITICAL</div>
+    </div>
+    <div class="stat-box" style="border-top:4px solid #e67e22">
+      <div class="num">35</div>
+      <div class="lbl">HIGH</div>
+    </div>
+    <div class="stat-box" style="border-top:4px solid #f39c12">
+      <div class="num">4</div>
+      <div class="lbl">MEDIUM</div>
+    </div>
+    <div class="stat-box" style="border-top:4px solid #27ae60">
+      <div class="num">4</div>
+      <div class="lbl">LOW</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Top Priorities</h2>
+    
+    <div class="priority">⚡ Immediately fix SQL injection and command injection vulnerabilities</div>
+    
+    <div class="priority">⚡ Sanitise all output to prevent XSS attacks</div>
+    
+    <div class="priority">⚡ Implement proper authentication controls and hashing</div>
+    
+  </div>
+
+  <div class="card">
+    <h2>Vulnerability Analysis</h2>
+    
+    <div class="finding" style="border-left-color:#e67e22">
+      <h3>SQL Injection
+        <span style="font-size:.75em;float:right;background:#e67e22;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 7.5
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits SQL Injection at http://webapp:5000/login using payload: '</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Use parameterised queries or prepared statements</li><li>Apply input validation and allowlisting</li><li>Use an ORM with built-in sanitisation</li><li>Implement WAF rules for SQLi patterns</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#e67e22">
+      <h3>Cross-Site Scripting (XSS) (Reflected)
+        <span style="font-size:.75em;float:right;background:#e67e22;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 7.5
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits Cross-Site Scripting (XSS) (Reflected) at http://webapp:5000/search using payload: <script>alert('XSS')</script></p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Review and sanitise all user-supplied input for this feature</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#e67e22">
+      <h3>Authentication
+        <span style="font-size:.75em;float:right;background:#e67e22;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 7.5
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits Authentication at http://webapp:5000/login using payload: Valid credentials found: admin/admin</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Implement account lockout after 5 failed attempts</li><li>Enforce strong password policy (min 12 chars, complexity)</li><li>Use bcrypt/argon2 for password hashing — never store plaintext</li><li>Regenerate session ID after successful login (prevent fixation)</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#e67e22">
+      <h3>Path Traversal
+        <span style="font-size:.75em;float:right;background:#e67e22;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 7.5
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits Path Traversal at http://webapp:5000/files using payload: ../../proc/self/environ</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Resolve canonical path and verify it starts with the allowed base directory</li><li>Use a whitelist of permitted filenames</li><li>Never pass user input directly to filesystem APIs</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#c0392b">
+      <h3>Command Injection
+        <span style="font-size:.75em;float:right;background:#c0392b;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 9.8
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits Command Injection at http://webapp:5000/ping using payload: 127.0.0.1; id</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Never pass user input to shell commands</li><li>Use language-native APIs (e.g., socket libraries) instead of ping</li><li>If shell is required, use allowlist validation on input</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#e67e22">
+      <h3>IDOR / Broken Access Control
+        <span style="font-size:.75em;float:right;background:#e67e22;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 7.5
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits IDOR / Broken Access Control at http://webapp:5000/profile/1 using payload: Accessed profile of user id=1 as alice</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Implement server-side ownership checks on every resource access</li><li>Use indirect reference maps (random tokens) instead of sequential IDs</li><li>Apply authentication middleware to all sensitive API endpoints</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#27ae60">
+      <h3>Nmap Port/Service Scan
+        <span style="font-size:.75em;float:right;background:#27ae60;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 3.1
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits Nmap Port/Service Scan at webapp:5000/tcp using payload: open port 5000</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Review and sanitise all user-supplied input for this feature</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#27ae60">
+      <h3>SQLMap SQL Injection
+        <span style="font-size:.75em;float:right;background:#27ae60;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 3.1
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits SQLMap SQL Injection at http://webapp:5000/login using payload: POST username/password</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Use parameterised queries or prepared statements</li><li>Apply input validation and allowlisting</li><li>Use an ORM with built-in sanitisation</li><li>Implement WAF rules for SQLi patterns</li></ul>
+    </div>
+    
+    <div class="finding" style="border-left-color:#27ae60">
+      <h3>OWASP ZAP
+        <span style="font-size:.75em;float:right;background:#27ae60;color:#fff;padding:3px 10px;border-radius:12px">
+          CVSS 3.1
+        </span>
+      </h3>
+      <p><strong>Attack Scenario:</strong> Attacker exploits OWASP ZAP at http://webapp:5000 using payload: zap-error</p>
+      <p><strong>Business Impact:</strong> Potential data breach, system compromise, and reputational damage.</p>
+      <p><strong>Remediation:</strong></p>
+      <ul><li>Review and sanitise all user-supplied input for this feature</li></ul>
+    </div>
+    
+  </div>
+
+  <div class="card">
+    <h2>Raw Findings (56 total)</h2>
+    <table>
+      <tr><th>Severity</th><th>Type</th><th>Endpoint</th><th>Payload</th><th>Evidence</th></tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>'</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge medium">MEDIUM</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>'</code></td>
+        <td>Verbose DB error in response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>'--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>'--+-</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>" OR "1"="1</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>' OR '1'='1'--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/dashboard</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>' OR 1=1--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/dashboard</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>admin'--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/dashboard</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>1' ORDER BY 1--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>1' UNION SELECT null--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge medium">MEDIUM</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>1' UNION SELECT null--</code></td>
+        <td>Verbose DB error in response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>1' AND SLEEP(5)--</code></td>
+        <td>Login bypassed: redirected to http://webapp:5000/login</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge medium">MEDIUM</span></td>
+        <td>SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>1' AND SLEEP(5)--</code></td>
+        <td>Verbose DB error in response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><script>alert('XSS')</script></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><img src=x onerror=alert(1)></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><svg onload=alert(1)></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code>'><script>alert(document.cookie)</script></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><iframe src=javascript:alert(1)></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code>javascript:alert(1)</code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><body onload=alert(1)></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Reflected)</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code><<SCRIPT>alert('XSS');//<</SCRIPT></code></td>
+        <td>Exact payload present in HTML response</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Stored)</td>
+        <td><code>http://webapp:5000/comments</code></td>
+        <td><code><script>alert('XSS')</script></code></td>
+        <td>Payload persisted and returned in page HTML</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Stored)</td>
+        <td><code>http://webapp:5000/comments</code></td>
+        <td><code><img src=x onerror=alert(1)></code></td>
+        <td>Payload persisted and returned in page HTML</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Stored)</td>
+        <td><code>http://webapp:5000/comments</code></td>
+        <td><code><svg onload=alert(1)></code></td>
+        <td>Payload persisted and returned in page HTML</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Cross-Site Scripting (XSS) (Stored)</td>
+        <td><code>http://webapp:5000/comments</code></td>
+        <td><code>'><script>alert(document.cookie)</script></code></td>
+        <td>Payload persisted and returned in page HTML</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: admin/admin</code></td>
+        <td>Valid credentials found: admin/admin</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: admin/admin123</code></td>
+        <td>Valid credentials found: admin/admin123</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: admin/password</code></td>
+        <td>Valid credentials found: admin/password</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: alice/password1</code></td>
+        <td>Valid credentials found: alice/password1</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: bob/bob1234</code></td>
+        <td>Valid credentials found: bob/bob1234</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: root/root</code></td>
+        <td>Valid credentials found: root/root</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>Valid credentials found: test/test</code></td>
+        <td>Valid credentials found: test/test</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge medium">MEDIUM</span></td>
+        <td>Authentication</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>No account lockout – brute force succeeded with multiple acc…</code></td>
+        <td>No account lockout – brute force succeeded with multiple accounts</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Path Traversal</td>
+        <td><code>http://webapp:5000/files</code></td>
+        <td><code>../../proc/self/environ</code></td>
+        <td>Sensitive file content detected: 'environ'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>127.0.0.1; id</code></td>
+        <td>OS command output detected: 'uid='</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>127.0.0.1 && id</code></td>
+        <td>OS command output detected: '/bin/sh'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>127.0.0.1 | id</code></td>
+        <td>OS command output detected: 'uid='</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>127.0.0.1; whoami</code></td>
+        <td>OS command output detected: 'root'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>127.0.0.1; cat /etc/passwd</code></td>
+        <td>OS command output detected: 'root'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>; ls -la</code></td>
+        <td>OS command output detected: 'root'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>| cat /etc/passwd</code></td>
+        <td>OS command output detected: 'root'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>`id`</code></td>
+        <td>OS command output detected: '/bin/sh'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>Command Injection</td>
+        <td><code>http://webapp:5000/ping</code></td>
+        <td><code>$(id)</code></td>
+        <td>OS command output detected: '/bin/sh'</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/profile/1</code></td>
+        <td><code>Accessed profile of user id=1 as alice</code></td>
+        <td>Profile data returned without ownership check</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/profile/2</code></td>
+        <td><code>Accessed profile of user id=2 as alice</code></td>
+        <td>Profile data returned without ownership check</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/profile/3</code></td>
+        <td><code>Accessed profile of user id=3 as alice</code></td>
+        <td>Profile data returned without ownership check</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/profile/4</code></td>
+        <td><code>Accessed profile of user id=4 as alice</code></td>
+        <td>Profile data returned without ownership check</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/api/user/1</code></td>
+        <td><code>Unauthenticated access to user id=1</code></td>
+        <td>Response includes password: admin1...</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/api/user/2</code></td>
+        <td><code>Unauthenticated access to user id=2</code></td>
+        <td>Response includes password: passwo...</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/api/user/3</code></td>
+        <td><code>Unauthenticated access to user id=3</code></td>
+        <td>Response includes password: bob123...</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge critical">CRITICAL</span></td>
+        <td>IDOR / Broken Access Control</td>
+        <td><code>http://webapp:5000/api/user/4</code></td>
+        <td><code>Unauthenticated access to user id=4</code></td>
+        <td>Response includes password: charli...</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge low">LOW</span></td>
+        <td>Nmap Port/Service Scan</td>
+        <td><code>webapp:5000/tcp</code></td>
+        <td><code>open port 5000</code></td>
+        <td>Service: http Werkzeug httpd 3.1.6</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge high">HIGH</span></td>
+        <td>Nmap Port/Service Scan</td>
+        <td><code>webapp:5000</code></td>
+        <td><code>nmap script: http-title</code></td>
+        <td>VulnApp - Home</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge low">LOW</span></td>
+        <td>SQLMap SQL Injection</td>
+        <td><code>http://webapp:5000/login</code></td>
+        <td><code>POST username/password</code></td>
+        <td>sqlmap binary not found in container</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge low">LOW</span></td>
+        <td>SQLMap SQL Injection</td>
+        <td><code>http://webapp:5000/search</code></td>
+        <td><code>GET q parameter</code></td>
+        <td>sqlmap binary not found in container</td>
+      </tr>
+      
+      <tr>
+        <td><span class="badge low">LOW</span></td>
+        <td>OWASP ZAP</td>
+        <td><code>http://webapp:5000</code></td>
+        <td><code>zap-error</code></td>
+        <td>ZAP scan error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))</td>
+      </tr>
+      
+    </table>
+  </div>
+
+</div>
+<footer>Generated by AutoPenTest · 2026-03-03 08:09:55</footer>
+</body>
+</html>

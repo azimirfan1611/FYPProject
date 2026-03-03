@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h2>User Search</h2>
+<form method="GET">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search username...">
+  <input type="submit" value="Search">
+</form>
+{% if error %}<div class="alert">{{ error }}</div>{% endif %}
+{% if q %}
+<!-- VULNERABILITY: q rendered raw (unescaped) → Reflected XSS -->
+<p>Results for: <b>{{ q | safe }}</b></p>
+{% endif %}
+{% if results %}
+<table>
+  <tr><th>ID</th><th>Username</th><th>Email</th></tr>
+  {% for r in results %}
+  <tr><td>{{ r.id }}</td><td>{{ r.username }}</td><td>{{ r.email }}</td></tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

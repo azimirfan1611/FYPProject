@@ -1,0 +1,1573 @@
+{
+  "target": "http://testphp.vulnweb.com",
+  "date": "20260303_122512",
+  "report_id": "d26646f8",
+  "analysis": {
+    "risk_rating": "Unknown",
+    "executive_summary": "name 'OPENAI_KEY' is not defined",
+    "total_findings": 222,
+    "critical_count": 0,
+    "high_count": 0,
+    "medium_count": 0,
+    "low_count": 0,
+    "findings_analysis": [],
+    "top_priorities": [],
+    "positive_findings": []
+  },
+  "findings": [
+    {
+      "type": "Nmap Port/Service Scan",
+      "endpoint": "testphp.vulnweb.com:80/tcp",
+      "payload": "open port 80",
+      "evidence": "Service: http nginx 1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "SQLMap SQL Injection",
+      "endpoint": "http://testphp.vulnweb.com/login",
+      "payload": "POST username/password",
+      "evidence": "sqlmap binary not found in container",
+      "severity": "LOW"
+    },
+    {
+      "type": "SQLMap SQL Injection",
+      "endpoint": "http://testphp.vulnweb.com/search",
+      "payload": "GET q parameter",
+      "evidence": "sqlmap binary not found in container",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/sitemap.xml",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/robots.txt",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/robots.txt",
+      "payload": "In Page Banner Information Leak",
+      "evidence": "The server returned a version banner string in the response content. Such information leaks may allow attackers to further target specific issues impacting the product and version in use. | Solution: Configure the server to prevent such information leaks. For example:\nUnder Tomcat this is done via the \"server\" directive and implementation of custom error pages.\nUnder Apache this is done via the \"S | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/sitemap.xml",
+      "payload": "In Page Banner Information Leak",
+      "evidence": "The server returned a version banner string in the response content. Such information leaks may allow attackers to further target specific issues impacting the product and version in use. | Solution: Configure the server to prevent such information leaks. For example:\nUnder Tomcat this is done via the \"server\" directive and implementation of custom error pages.\nUnder Apache this is done via the \"S | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/robots.txt",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/sitemap.xml",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/disclaimer.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/categories.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/index.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/privacy.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/userinfo.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/privacy.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/style.css",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/index.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/privacy.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"\" method=\"post\" name=\"faddentry\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/style.css",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/userinfo.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Flash/add.swf",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/index.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Flash/add.swf",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=2",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form name=\"loginform\" method=\"post\" action=\"userinfo.php\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=2",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=2",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/images/logo.gif",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/index.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/images/logo.gif",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/login.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=2",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/cart.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/index.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=12",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/network-attached-storage-dlink/1/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/network-attached-storage-dlink/1/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=12",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/network-attached-storage-dlink/1/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=12",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/network-attached-storage-dlink/1/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/network-attached-storage-dlink/1/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=12",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=12",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/styles.css",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/styles.css",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/web-camera-a4tech/2/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=2",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=1",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=1",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/AJAX/index.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/1.jpg",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/color-printer/3/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/web-camera-a4tech/2/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/1.jpg",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/images/remark.gif",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/images/remark.gif",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/color-printer/3/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/color-printer/3/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/web-camera-a4tech/2/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/web-camera-a4tech/2/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/web-camera-a4tech/2/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form name=\"form1\" method=\"post\" action=\"/secured/newuser.php\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/color-printer/3/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/Details/color-printer/3/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file='%20+%20pict.item(0).firstChild.nodeValue%20+%20'",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form name='f_addcart' method='POST' action='cart.php'>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/3.jpg",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file='%20+%20pict.item(0).firstChild.nodeValue%20+%20'",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/3.jpg",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file='%20+%20pict.item(0).firstChild.nodeValue%20+%20'",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=1",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/signup.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/high",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/2.jpg",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/high",
+      "payload": "In Page Banner Information Leak",
+      "evidence": "The server returned a version banner string in the response content. Such information leaks may allow attackers to further target specific issues impacting the product and version in use. | Solution: Configure the server to prevent such information leaks. For example:\nUnder Tomcat this is done via the \"server\" directive and implementation of custom error pages.\nUnder Apache this is done via the \"S | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/high",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/images/2.jpg",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-1/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-1/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=1",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-1/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-1/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-1/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-3.html",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file=./pictures/2.jpg&size=160",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-1.html",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-3/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "Absence of Anti-CSRF Tokens",
+      "evidence": "No Anti-CSRF tokens were found in a HTML submission form.\nA cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functi | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nFor example, use anti-CSRF p | Evidence: <form action=\"search.php?test=query\" method=\"post\">",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-3/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-3/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-3/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file=./pictures/2.jpg&size=160",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/showimage.php?file=./pictures/2.jpg&size=160",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-3.html",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-1.html",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-2/",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-3/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-1.html",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-3.html",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-2.html",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-2.html",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-2.html",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-2.html",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-2.html",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-3.html",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-3.html",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=12",
+      "payload": "param=x-frame-options",
+      "evidence": "The response does not protect against 'ClickJacking' attacks. It should include either Content-Security-Policy with 'frame-ancestors' directive or X-Frame-Options. | Solution: Modern Web browsers support the Content-Security-Policy and X-Frame-Options HTTP headers. Ensure one of them is set on all web pages returned by your site/app.\nIf you expect the page to be framed only",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-2/",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-2/",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=12",
+      "payload": "Content Security Policy (CSP) Header Not Set",
+      "evidence": "Content Security Policy (CSP) is an added layer of security that helps to detect and mitigate certain types of attacks, including Cross Site Scripting (XSS) and data injection attacks. These attacks are used for everything from data theft to site defacement or distribution of malware. CSP provides a | Solution: Ensure that your web server, application server, load balancer, etc. is configured to set the Content-Security-Policy header.",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-1.html",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-2/",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=12",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=12",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=12",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/BuyProduct-2/",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/RateProduct-1.html",
+      "payload": "Server Leaks Information via \"X-Powered-By\" HTTP Response Header Field(s)",
+      "evidence": "The web/application server is leaking information via one or more \"X-Powered-By\" HTTP response headers. Access to such information may facilitate attackers identifying other frameworks/components your web application is reliant upon and the vulnerabilities such components may be subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress \"X-Powered-By\" headers. | Evidence: X-Powered-By: PHP/5.6.40-38+ubuntu20.04.1+deb.sury.org+1",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/style.css",
+      "payload": "Server Leaks Version Information via \"Server\" HTTP Response Header Field",
+      "evidence": "The web/application server is leaking version information via the \"Server\" HTTP response header. Access to such information may facilitate attackers identifying other vulnerabilities your web/application server is subject to. | Solution: Ensure that your web server, application server, load balancer, etc. is configured to suppress the \"Server\" header or provide generic details. | Evidence: nginx/1.19.0",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/style.css",
+      "payload": "param=x-content-type-options",
+      "evidence": "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared con | Solution: Ensure that the application/web server sets the Content-Type header appropriately, and that it sets the X-Content-Type-Options header to 'nosniff' for all web pages.\nIf possible, ensure that the end u",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/guestbook.php",
+      "payload": "param=name",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: </strong><scrIpt>alert(1);</scRipt><strong>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=%27%22%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=test",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: '\"<scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "param=uuname",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: </li><scrIpt>alert(1);</scRipt><li>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/?pp=%22+onMouseOver%3D%22alert%281%29%3B",
+      "payload": "param=pp",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: \" onMouseOver=\"alert(1);",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "param=searchFor",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: </h2><scrIpt>alert(1);</scRipt><h2>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/userinfo.php",
+      "payload": "param=uname",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: '\"<scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=artist",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E&pp=12",
+      "payload": "param=p",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=artist",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=cat",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/hpp/params.php?p=valid&pp=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=pp",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=%3CscrIpt%3Ealert%281%29%3B%3C%2FscRipt%3E",
+      "payload": "param=pic",
+      "evidence": "Cross-site Scripting (XSS) is an attack technique that involves echoing attacker-supplied code into a user's browser instance. A browser instance can be a standard web browser client, or a browser object embedded in a software product such as the browser within WinAmp, an RSS reader, or an email cli | Solution: Phase: Architecture and Design\nUse a vetted library or framework that does not allow this weakness to occur or provides constructs that make this weakness easier to avoid.\nExamples of libraries and fr | Evidence: <scrIpt>alert(1);</scRipt>",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=%27",
+      "payload": "param=test",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "param=uuname",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/search.php?test=query",
+      "payload": "param=searchFor",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/userinfo.php",
+      "payload": "param=uname",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=%27",
+      "payload": "param=artist",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?artist=%27",
+      "payload": "param=artist",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/listproducts.php?cat=%27",
+      "payload": "param=cat",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/product.php?pic=%27",
+      "payload": "param=pic",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta | Evidence: You have an error in your SQL syntax",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/secured/newuser.php",
+      "payload": "param=ucc",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta",
+      "severity": "LOW"
+    },
+    {
+      "type": "OWASP ZAP",
+      "endpoint": "http://testphp.vulnweb.com/artists.php?artist=3",
+      "payload": "param=artist",
+      "evidence": "SQL injection may be possible. | Solution: Do not trust client side input, even if there is client side validation in place.\nIn general, type check all data on the server side.\nIf the application uses JDBC, use PreparedStatement or CallableSta",
+      "severity": "LOW"
+    }
+  ]
+}
