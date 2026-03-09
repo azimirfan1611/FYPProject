@@ -44,9 +44,38 @@
   </div>
 </div>
 
+<!-- Findings Over Time Chart -->
+<div class="terminal rounded-xl p-6 mb-6">
+  <h2 class="text-white font-bold text-lg mb-4">Findings Over Time</h2>
+  <div class="relative h-40">
+    {% set max_f = scans | map(attribute='total_findings') | map('default', 0) | list | max %}
+    <div class="flex items-end gap-1 h-full">
+      {% for scan in scans %}
+      {% set count = scan.total_findings or 0 %}
+      {% set bar_h = (count / (max_f if max_f > 0 else 1) * 100) | int %}
+      {% set r = scan.risk_rating | lower if scan.risk_rating else 'low' %}
+      <div class="flex flex-col items-center flex-1 h-full justify-end group relative">
+        <div class="absolute bottom-full mb-1 hidden group-hover:block text-xs text-white bg-gray-700 px-2 py-1 rounded whitespace-nowrap z-10">
+          {{ count }} findings · {{ scan.started_at[:10] }}
+        </div>
+        <div class="w-full rounded-t
+          {% if r == 'critical' %}bg-red-600
+          {% elif r == 'high' %}bg-orange-500
+          {% elif r == 'medium' %}bg-yellow-500
+          {% else %}bg-green-500{% endif %}"
+          style="height: {{ [bar_h, 4] | max }}%">
+        </div>
+        <div class="text-xs text-gray-600 mt-1 truncate w-full text-center">{{ scan.started_at[5:10] }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <p class="text-xs text-gray-600 mt-2">Each bar = one scan · color = risk level · hover for details</p>
+</div>
+
 <!-- Risk Distribution Chart (CSS-based) -->
 <div class="terminal rounded-xl p-6 mb-6">
-  <h2 class="text-white font-bold text-lg mb-4">🎯 Risk Distribution</h2>
+  <h2 class="text-white font-bold text-lg mb-4">Risk Distribution</h2>
   {% set risk_counts = {} %}
   {% for scan in scans %}
     {% if scan.risk_rating %}
@@ -77,7 +106,7 @@
 
 <!-- Scan Timeline -->
 <div class="terminal rounded-xl p-6">
-  <h2 class="text-white font-bold text-lg mb-4">🕒 Scan History</h2>
+  <h2 class="text-white font-bold text-lg mb-4">Scan History</h2>
   <div class="space-y-3">
     {% for scan in scans | reverse %}
     <div class="bg-gray-900 rounded-lg p-4 flex items-center justify-between">

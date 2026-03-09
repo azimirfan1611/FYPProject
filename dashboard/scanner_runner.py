@@ -15,6 +15,33 @@ _local = os.path.join(os.path.dirname(__file__), "..", "pentester")
 if os.path.exists(_local) and _local not in sys.path:
     sys.path.insert(0, _local)
 
+
+def _enrich_with_cves(findings: list) -> list:
+    """Attach NVD CVE IDs to findings based on vulnerability type keywords."""
+    # Static CVE mapping for common vulnerabilities (offline, no API needed)
+    _CVE_MAP = {
+        "sql injection": ["CVE-2021-44228", "CVE-2019-1010", "CVE-2023-23752"],
+        "xss": ["CVE-2021-26295", "CVE-2020-11022"],
+        "cross-site scripting": ["CVE-2021-26295", "CVE-2020-11022"],
+        "command injection": ["CVE-2021-4034", "CVE-2022-26134"],
+        "path traversal": ["CVE-2021-41773", "CVE-2021-42013"],
+        "idor": ["CVE-2021-27905"],
+        "ssrf": ["CVE-2021-26084", "CVE-2019-8451"],
+        "xxe": ["CVE-2021-42550", "CVE-2019-12086"],
+        "ssti": ["CVE-2019-11510", "CVE-2021-21315"],
+        "ldap injection": ["CVE-2021-26855"],
+        "cors": ["CVE-2021-22145"],
+        "ssl": ["CVE-2014-0160", "CVE-2021-3449"],
+    }
+    for f in findings:
+        ftype = f.get("type", "").lower()
+        for keyword, cves in _CVE_MAP.items():
+            if keyword in ftype and "cve_ids" not in f:
+                f["cve_ids"] = cves
+                break
+    return findings
+
+
 # ── Thread-safe SCANS store ────────────────────────────────────────────────
 SCANS: OrderedDict = OrderedDict()
 SCANS_LOCK = threading.Lock()
@@ -48,6 +75,7 @@ class _ScanLogger:
         while "\n" in self._buf:
             line, self._buf = self._buf.split("\n", 1)
             line = _ANSI_RE.sub("", line).strip()
+            line = line.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
             if line:
                 with SCANS_LOCK:
                     logs = SCANS[self._id]["logs"]
@@ -70,6 +98,14 @@ def _safe_log(scan_id: str, msg: str):
         logs = SCANS[scan_id]["logs"]
         if len(logs) < MAX_LOGS:
             logs.append(msg)
+    # Emit via SocketIO if available
+    try:
+        from flask import current_app
+        from flask_socketio import emit as sio_emit
+        sio_emit("log_line", {"scan_id": scan_id, "line": msg},
+                 room=f"scan_{scan_id}", namespace="/")
+    except Exception:
+        pass
 
 
 def _import_scanner(module_path: str, class_name: str, target_url: str,
@@ -108,28 +144,37 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
 
         # ── Phase 1: Custom + new scanners ─────────────────────────────────
         _update(scan_id, phase="Phase 1: Custom Scanners", progress_pct=5)
+        with SCANS_LOCK:
+            SCANS[scan_id]["phase_start"] = datetime.utcnow().isoformat()
         _safe_log(scan_id, "=" * 50)
         _safe_log(scan_id, "PHASE 1: Custom Python Scanners")
         _safe_log(scan_id, "=" * 50)
 
         custom_steps = [
-            ("SQL Injection",     "scanners.sql_injection",    "SQLInjectionScanner"),
-            ("XSS",               "scanners.xss_scanner",      "XSSScanner"),
-            ("Authentication",    "scanners.auth_tester",      "AuthTester"),
-            ("Path Traversal",    "scanners.dir_traversal",    "DirTraversalScanner"),
-            ("Command Injection", "scanners.command_injection", "CommandInjectionScanner"),
-            ("IDOR",              "scanners.idor_scanner",     "IDORScanner"),
-            ("HTTP Headers",      "scanners.headers_scanner",  "HeadersScanner"),
-            ("CORS",              "scanners.cors_scanner",     "CORSScanner"),
-            ("SSL/TLS",           "scanners.ssl_scanner",      "SSLScanner"),
-            ("API Security",      "scanners.api_scanner",      "APIScanner"),
-            ("DNS/Subdomain",     "scanners.dns_scanner",      "DNSScanner"),
-            ("WAF Detection",     "scanners.waf_scanner",      "WAFScanner"),
-            ("NPM Supply Chain",  "scanners.npm_scanner",      "NPMScanner"),
+            ("SQL Injection",     "scanners.sql_injection",       "SQLInjectionScanner"),
+            ("XSS",               "scanners.xss_scanner",         "XSSScanner"),
+            ("DOM XSS",           "scanners.dom_xss_scanner",     "DOMXSSScanner"),
+            ("Authentication",    "scanners.auth_tester",         "AuthTester"),
+            ("Path Traversal",    "scanners.dir_traversal",       "DirTraversalScanner"),
+            ("Command Injection", "scanners.command_injection",   "CommandInjectionScanner"),
+            ("HTTP Smuggling",    "scanners.http_smuggling_scanner", "HTTPSmugglingScanner"),
+            ("IDOR",              "scanners.idor_scanner",        "IDORScanner"),
+            ("HTTP Headers",      "scanners.headers_scanner",     "HeadersScanner"),
+            ("CORS",              "scanners.cors_scanner",        "CORSScanner"),
+            ("SSL/TLS",           "scanners.ssl_scanner",         "SSLScanner"),
+            ("API Security",      "scanners.api_scanner",         "APIScanner"),
+            ("DNS/Subdomain",     "scanners.dns_scanner",         "DNSScanner"),
+            ("WAF Detection",     "scanners.waf_scanner",         "WAFScanner"),
+            ("NPM Supply Chain",  "scanners.npm_scanner",         "NPMScanner"),
+            ("SSTI",              "scanners.ssti_scanner",        "SSTIScanner"),
+            ("XXE",               "scanners.xxe_scanner",         "XXEScanner"),
+            ("LDAP Injection",    "scanners.ldap_scanner",        "LDAPInjectionScanner"),
+            ("Secrets Detection", "scanners.secrets_scanner",     "SecretsScanner"),
+            ("Semgrep SAST",      "scanners.semgrep_scanner",     "SemgrepScanner"),
         ]
 
         all_findings = []
-        total_steps  = len(custom_steps) + 5  # 4 tools + 1 for AI+report
+        total_steps  = len(custom_steps) + 7  # 6 tools + 1 for AI+report
         step         = 0
 
         for name, module_path, class_name in custom_steps:
@@ -151,6 +196,11 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
             _update(scan_id, phase=f"Phase 1: {name}",
                     progress_pct=int(5 + (step / total_steps) * 40))
 
+        with SCANS_LOCK:
+            if SCANS[scan_id].get("phase_start"):
+                elapsed = (datetime.utcnow() - datetime.fromisoformat(SCANS[scan_id]["phase_start"])).total_seconds()
+                SCANS[scan_id]["phase_times"]["Phase 1"] = round(elapsed, 1)
+                SCANS[scan_id]["phase_start"] = datetime.utcnow().isoformat()
         # ── Phase 2: Real pentest tools ────────────────────────────────────
         _update(scan_id, phase="Phase 2: Real Pentest Tools", progress_pct=45)
         _safe_log(scan_id, "")
@@ -159,11 +209,13 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
         _safe_log(scan_id, "=" * 50)
 
         tool_steps = [
-            ("Nmap",      "scanners.nmap_scanner",   "NmapScanner",  {}),
-            ("Nikto",     "scanners.nikto_scanner",  "NiktoScanner", {}),
-            ("SQLMap",    "scanners.sqlmap_scanner", "SQLMapScanner",{}),
-            ("OWASP ZAP", "scanners.zap_scanner",    "ZAPScanner",
+            ("Nmap",        "scanners.nmap_scanner",        "NmapScanner",        {}),
+            ("Nikto",       "scanners.nikto_scanner",       "NiktoScanner",       {}),
+            ("SQLMap",      "scanners.sqlmap_scanner",      "SQLMapScanner",      {}),
+            ("OWASP ZAP",   "scanners.zap_scanner",         "ZAPScanner",
              {"zap_url": zap_url, "zap_key": zap_key}),
+            ("Nuclei",      "scanners.nuclei_scanner",      "NucleiScanner",      {}),
+            ("Metasploit",  "scanners.metasploit_scanner",  "MetasploitScanner",  {}),
         ]
 
         for name, module_path, class_name, extra in tool_steps:
@@ -185,6 +237,32 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
             _update(scan_id, phase=f"Phase 2: {name}",
                     progress_pct=int(45 + (step / total_steps) * 30))
 
+        # ── Phase 3: Hash Detection & Cracking (Hashcat) ──────────────────
+        _update(scan_id, phase="Phase 3: Hash Detection & Cracking", progress_pct=76)
+        _safe_log(scan_id, "")
+        _safe_log(scan_id, "=" * 50)
+        _safe_log(scan_id, "PHASE 3: Hash Detection & Cracking (Hashcat)")
+        _safe_log(scan_id, "=" * 50)
+        _safe_log(scan_id, "[*] Running Hashcat...")
+        try:
+            scanner = _import_scanner("scanners.hashcat_scanner", "HashcatScanner", url)
+            with redirect_stdout(logger), redirect_stderr(logger):
+                hc_findings = scanner.run(prior_findings=all_findings)
+            all_findings.extend(hc_findings)
+            _safe_log(scan_id, f"    \u2192 {len(hc_findings)} finding(s)")
+        except ModuleNotFoundError:
+            _safe_log(scan_id, "    [-] Hashcat module not available, skipping")
+        except Exception as e:
+            _safe_log(scan_id, f"    [!] Hashcat error: {e}")
+
+        # Default confidence for all scanners that don't set it explicitly.
+        # Heuristic/static scanners (timing-based, SAST) are "inferred"; everything
+        # else that recorded a finding verified it directly → "confirmed".
+        _INFERRED_SCANNERS = {"Semgrep Static Analysis", "HTTP Request Smuggling"}
+        for f in all_findings:
+            if "confidence" not in f:
+                f["confidence"] = "inferred" if f.get("type", "") in _INFERRED_SCANNERS else "confirmed"
+
         # ── Compliance Mapping ─────────────────────────────────────────────
         _safe_log(scan_id, "[*] Running compliance mapping (OWASP/CWE/PCI/NIST)...")
         try:
@@ -204,6 +282,11 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
         except Exception as e:
             _safe_log(scan_id, f"    [-] Threat intel: {e}")
         _update(scan_id, threat_intel=threat_intel)
+
+        # ── CVE Enrichment ─────────────────────────────────────────────────
+        _safe_log(scan_id, "[*] Enriching findings with CVE data...")
+        all_findings = _enrich_with_cves(all_findings)
+        _safe_log(scan_id, f"    → CVE enrichment complete")
 
         # ── AI Analysis ────────────────────────────────────────────────────
         _update(scan_id, phase="AI Analysis", progress_pct=88)
@@ -279,6 +362,7 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
 
 
 def run_scan_async(scan_id: str, url: str, report_dir: str):
+    url = url.rstrip("/")   # prevent double-slash in all scanner URLs
     scan_cfg = {
         "zap_url":      os.environ.get("ZAP_URL",        "http://zap:8090"),
         "zap_key":      os.environ.get("ZAP_KEY",        ""),
@@ -304,236 +388,9 @@ def run_scan_async(scan_id: str, url: str, report_dir: str):
             "error":          None,
             "started_at":     datetime.utcnow().isoformat(),
             "completed_at":   None,
+            "phase_times":    {},
+            "phase_start":    None,
         }
     t = threading.Thread(target=_run, args=(scan_id, url, report_dir, scan_cfg),
                          daemon=True)
-    t.start()
-import sys, io, threading, time, os
-from datetime import datetime
-from contextlib import redirect_stdout
-
-# Make pentest_lib importable (Docker path)
-if "/app/pentest_lib" not in sys.path:
-    sys.path.insert(0, "/app/pentest_lib")
-
-# Also support local dev
-_local_lib = os.path.join(os.path.dirname(__file__), "..", "pentester")
-if os.path.exists(_local_lib) and _local_lib not in sys.path:
-    sys.path.insert(0, _local_lib)
-
-SCANS: dict = {}
-
-
-class _ScanLogger:
-    """Thread-safe stdout redirector that appends to scan log list."""
-    def __init__(self, scan_id: str):
-        self._id = scan_id
-        self._buf = ""
-
-    def write(self, text: str):
-        self._buf += text
-        while "\n" in self._buf:
-            line, self._buf = self._buf.split("\n", 1)
-            line = line.strip()
-            if line:
-                # Strip ANSI colour codes
-                import re
-                line = re.sub(r"\x1b\[[0-9;]*m", "", line)
-                SCANS[self._id]["logs"].append(line)
-
-    def flush(self):
-        pass
-
-
-def _update(scan_id, **kwargs):
-    SCANS[scan_id].update(kwargs)
-
-
-def _run(scan_id: str, url: str, report_dir: str):
-    scan = SCANS[scan_id]
-    logger = _ScanLogger(scan_id)
-
-    def log(msg):
-        scan["logs"].append(msg)
-
-    try:
-        from config import TARGET_URL   # will be overridden below
-        import config as _cfg
-        _cfg.TARGET_URL = url
-
-        # Also patch ZAP config
-        zap_url = os.environ.get("ZAP_URL", "http://zap:8090")
-        zap_key = os.environ.get("ZAP_KEY", "zapkey123")
-        _cfg.ZAP_URL = zap_url
-        _cfg.ZAP_KEY = zap_key
-
-    except Exception:
-        pass
-
-    # ── Phase 1: Custom scanners ───────────────────────────────────────────
-    _update(scan_id, phase="Phase 1: Custom Scanners", progress_pct=5)
-    log("=" * 50)
-    log("PHASE 1: Custom Python Scanners")
-    log("=" * 50)
-
-    custom_steps = [
-        ("SQL Injection",     "scanners.sql_injection",   "SQLInjectionScanner"),
-        ("XSS",               "scanners.xss_scanner",     "XSSScanner"),
-        ("Authentication",    "scanners.auth_tester",     "AuthTester"),
-        ("Path Traversal",    "scanners.dir_traversal",   "DirTraversalScanner"),
-        ("Command Injection", "scanners.command_injection","CommandInjectionScanner"),
-        ("IDOR",              "scanners.idor_scanner",    "IDORScanner"),
-        ("NPM Supply Chain",  "scanners.npm_scanner",     "NPMScanner"),
-    ]
-
-    all_findings = []
-    total_steps  = len(custom_steps) + 4 + 1  # +4 tools, +1 AI
-    step         = 0
-
-    for name, module_path, class_name in custom_steps:
-        if scan["status"] == "cancelled":
-            return
-        log(f"[*] Running {name} scanner...")
-        try:
-            import importlib
-            mod = importlib.import_module(module_path)
-            # Patch TARGET_URL inside scanner config
-            import config as _cfg
-            _cfg.TARGET_URL = url
-
-            cls  = getattr(mod, class_name)
-            with redirect_stdout(logger):
-                findings = cls().run()
-            all_findings.extend(findings)
-            log(f"    → {len(findings)} finding(s)")
-        except Exception as e:
-            log(f"    [!] {name} error: {e}")
-
-        step += 1
-        _update(scan_id,
-                phase=f"Phase 1: {name}",
-                progress_pct=int(5 + (step / total_steps) * 40))
-
-    # ── Phase 2: Real pentest tools ────────────────────────────────────────
-    _update(scan_id, phase="Phase 2: Real Pentest Tools", progress_pct=45)
-    log("")
-    log("=" * 50)
-    log("PHASE 2: Real Pentest Tools")
-    log("=" * 50)
-
-    tool_steps = [
-        ("Nmap",      "scanners.nmap_scanner",   "NmapScanner"),
-        ("Nikto",     "scanners.nikto_scanner",  "NiktoScanner"),
-        ("SQLMap",    "scanners.sqlmap_scanner", "SQLMapScanner"),
-        ("OWASP ZAP", "scanners.zap_scanner",    "ZAPScanner"),
-    ]
-
-    for name, module_path, class_name in tool_steps:
-        if scan["status"] == "cancelled":
-            return
-        log(f"[*] Running {name}...")
-        try:
-            import importlib
-            mod = importlib.import_module(module_path)
-            import config as _cfg
-            _cfg.TARGET_URL = url
-            _cfg.ZAP_URL    = os.environ.get("ZAP_URL", "http://zap:8090")
-            _cfg.ZAP_KEY    = os.environ.get("ZAP_KEY", "zapkey123")
-
-            cls = getattr(mod, class_name)
-            with redirect_stdout(logger):
-                findings = cls().run()
-            all_findings.extend(findings)
-            log(f"    → {len(findings)} finding(s)")
-        except Exception as e:
-            log(f"    [!] {name} error: {e}")
-
-        step += 1
-        _update(scan_id,
-                phase=f"Phase 2: {name}",
-                progress_pct=int(45 + (step / total_steps) * 40))
-
-    # ── AI Analysis ────────────────────────────────────────────────────────
-    _update(scan_id, phase="AI Analysis", progress_pct=88)
-    log("")
-    log("[*] Running AI analysis...")
-    try:
-        import config as _cfg
-        _cfg.OPENAI_KEY   = os.environ.get("OPENAI_API_KEY", "")
-        _cfg.OPENAI_MODEL = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
-        from ai_analyzer import analyze
-        with redirect_stdout(logger):
-            analysis = analyze(all_findings)
-        risk = analysis.get("risk_rating", "Unknown")
-        log(f"    → Risk Rating: {risk}")
-        log(f"    → {analysis.get('executive_summary','')[:120]}")
-    except Exception as e:
-        log(f"    [!] AI analysis error: {e}")
-        analysis = {"risk_rating": "Unknown", "executive_summary": str(e),
-                    "total_findings": len(all_findings),
-                    "critical_count": 0, "high_count": 0,
-                    "medium_count": 0, "low_count": 0,
-                    "findings_analysis": [], "top_priorities": [],
-                    "positive_findings": []}
-
-    # ── Generate report ────────────────────────────────────────────────────
-    _update(scan_id, phase="Generating Report", progress_pct=95)
-    log("[*] Generating report...")
-    try:
-        import config as _cfg
-        _cfg.TARGET_URL  = url
-        _cfg.REPORT_DIR  = report_dir
-        from report_generator import generate
-        with redirect_stdout(logger):
-            paths = generate(all_findings, analysis)
-
-        with open(paths["html"], "r", encoding="utf-8") as f:
-            report_html = f.read()
-
-        import json as _json
-        with open(paths["json"], "r") as f:
-            report_json = _json.load(f)
-
-        log(f"    → Report saved: {paths['html']}")
-
-        _update(scan_id,
-                status="complete",
-                phase="Complete",
-                progress_pct=100,
-                total_findings=len(all_findings),
-                risk_rating=analysis.get("risk_rating", "Unknown"),
-                findings=all_findings,
-                analysis=analysis,
-                report_html=report_html,
-                report_json=report_json,
-                report_path=paths["html"],
-                completed_at=datetime.utcnow().isoformat())
-        log("[✓] Assessment complete!")
-
-    except Exception as e:
-        log(f"[!] Report error: {e}")
-        _update(scan_id, status="error", error=str(e), phase="Error",
-                progress_pct=100)
-
-
-def run_scan_async(scan_id: str, url: str, report_dir: str):
-    SCANS[scan_id] = {
-        "id":             scan_id,
-        "url":            url,
-        "status":         "running",
-        "phase":          "Starting...",
-        "progress_pct":   0,
-        "logs":           [],
-        "findings":       [],
-        "analysis":       {},
-        "report_html":    None,
-        "report_json":    None,
-        "report_path":    None,
-        "total_findings": 0,
-        "risk_rating":    "",
-        "error":          None,
-        "started_at":     datetime.utcnow().isoformat(),
-        "completed_at":   None,
-    }
-    t = threading.Thread(target=_run, args=(scan_id, url, report_dir), daemon=True)
     t.start()

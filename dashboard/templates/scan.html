@@ -9,7 +9,7 @@
     <h1 class="text-2xl font-bold text-white mt-1">
       Scan <span class="text-cyber-blue font-mono">{{ scan.id }}</span>
     </h1>
-    <p class="text-gray-400 text-sm mt-1">🎯 {{ scan.url }}</p>
+    <p class="text-gray-400 text-sm mt-1">Target: {{ scan.url }}</p>
   </div>
   <div class="flex gap-3">
     {% if scan.status == 'running' %}
@@ -52,6 +52,7 @@
       </span>
       <div>
         <div class="font-bold text-white" id="phaseText">{{ scan.phase }}</div>
+        <span id="etaText" class="text-xs text-gray-500 ml-2"></span>
         <div class="text-sm text-gray-400">
           Started: {{ scan.started_at[:16] | replace('T',' ') }} UTC
           {% if scan.completed_at %}
@@ -139,7 +140,7 @@
 
   <!-- AI Summary / Findings -->
   <div class="terminal rounded-xl p-4">
-    <h3 class="text-white font-bold mb-3">🤖 AI Analysis Summary</h3>
+    <h3 class="text-white font-bold mb-3">AI Analysis Summary</h3>
     {% if scan.analysis and scan.analysis.executive_summary %}
     <p class="text-gray-300 text-sm mb-4 leading-relaxed">
       {{ scan.analysis.executive_summary }}
@@ -202,6 +203,27 @@ const initStatus = "{{ scan.status }}";
 let logOffset   = {{ scan.logs | length }};
 let pollTimer   = null;
 
+// Try WebSocket first, fall back to polling
+let useSocket = false;
+try {
+  if (typeof io !== 'undefined') {
+    const socket = io();
+    socket.emit('subscribe_scan', {scan_id: scanId});
+    socket.on('log_line', function(data) {
+      if (data.scan_id === scanId) {
+        const box = document.getElementById('logBox');
+        const d = document.createElement('div');
+        d.className = logClass(data.line);
+        d.textContent = data.line;
+        box.appendChild(d);
+        box.scrollTop = box.scrollHeight;
+        logOffset++;
+      }
+    });
+    useSocket = true;
+  }
+} catch(e) {}
+
 function severityColor(s) {
   const m = {'CRITICAL':'text-red-400','HIGH':'text-orange-400',
              'MEDIUM':'text-yellow-400','LOW':'text-green-400'};
@@ -215,6 +237,7 @@ function logClass(line) {
   if (line.includes('===')) return 'text-yellow-400 font-bold';
   return 'text-gray-400';
 }
+
 
 async function fetchLogs() {
   try {
@@ -243,6 +266,12 @@ async function fetchStatus() {
     document.getElementById('progressBar').style.width = st.progress_pct + '%';
     document.getElementById('progressPct').textContent = st.progress_pct + '%';
     document.getElementById('phaseText').textContent   = st.phase;
+    if (st.eta_seconds > 0) {
+      const etaEl = document.getElementById('etaText');
+      if (etaEl) etaEl.textContent = `~${Math.ceil(st.eta_seconds / 60)} min remaining`;
+    }
+    const phaseHint = document.getElementById('phaseHint');
+    if (phaseHint) phaseHint.textContent = st.phase;
 
     // Update risk badge
     if (st.risk_rating) {

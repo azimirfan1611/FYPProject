@@ -463,7 +463,7 @@ FILES["dashboard/templates/index.html"] = """\
 
 <!-- Scan Form -->
 <div class="terminal rounded-xl p-8 mb-8 max-w-2xl mx-auto">
-  <h2 class="text-cyber-blue font-bold text-lg mb-4 glow-blue">🎯 Start New Scan</h2>
+  <h2 class="text-cyber-blue font-bold text-lg mb-4 glow-blue">Start New Scan</h2>
   <form method="POST" action="/scan" id="scanForm">
     <div class="flex gap-3 mb-4">
       <input type="text" name="url" id="urlInput"
@@ -509,7 +509,7 @@ FILES["dashboard/templates/index.html"] = """\
 <!-- Scan History -->
 {% if scans %}
 <div class="terminal rounded-xl p-6">
-  <h2 class="text-white font-bold text-lg mb-4">📋 Scan History</h2>
+  <h2 class="text-white font-bold text-lg mb-4">Scan History</h2>
   <div class="overflow-x-auto">
     <table class="w-full text-sm">
       <thead>
@@ -607,7 +607,7 @@ FILES["dashboard/templates/scan.html"] = """\
     <h1 class="text-2xl font-bold text-white mt-1">
       Scan <span class="text-cyber-blue font-mono">{{ scan.id }}</span>
     </h1>
-    <p class="text-gray-400 text-sm mt-1">🎯 {{ scan.url }}</p>
+    <p class="text-gray-400 text-sm mt-1">{{ scan.url }}</p>
   </div>
   <div class="flex gap-3">
     {% if scan.status == 'running' %}

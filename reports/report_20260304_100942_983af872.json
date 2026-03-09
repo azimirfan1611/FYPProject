@@ -1,0 +1,264 @@
+{
+  "target": "https://www.caricite.com/",
+  "date": "20260304_100942",
+  "report_id": "983af872",
+  "analysis": {
+    "executive_summary": "The assessment identified 11 findings across 6 vulnerability categories. Overall risk is rated High. Immediate remediation is required for critical and high severity issues.",
+    "risk_rating": "High",
+    "total_findings": 11,
+    "critical_count": 0,
+    "high_count": 3,
+    "medium_count": 3,
+    "low_count": 4,
+    "findings_analysis": [
+      {
+        "type": "Authentication",
+        "cvss_score": 9.1,
+        "cvss_vector": "AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "attack_scenario": "Attacker exploits Authentication at https://www.caricite.com/login using: No rate limiting on login \u2014 brute force allowed",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Implement account lockout after 5 failed attempts",
+          "Enforce strong password policy (min 12 chars, complexity)",
+          "Use bcrypt/argon2 for password hashing \u2014 never store plaintext",
+          "Regenerate session ID after login (prevent session fixation)",
+          "Enable MFA for privileged accounts"
+        ],
+        "code_fix": "# bcrypt password hashing\nfrom bcrypt import hashpw, gensalt, checkpw\nhashed = hashpw(password.encode(), gensalt())\nis_valid = checkpw(password.encode(), hashed)",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      },
+      {
+        "type": "HTTP Security Headers",
+        "cvss_score": 4.3,
+        "cvss_vector": "AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+        "attack_scenario": "Attacker exploits HTTP Security Headers at https://www.caricite.com/ using: Missing: content-security-policy",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Add Content-Security-Policy: default-src 'self'",
+          "Add X-Frame-Options: DENY",
+          "Add X-Content-Type-Options: nosniff",
+          "Add Strict-Transport-Security: max-age=31536000; includeSubDomains",
+          "Remove Server, X-Powered-By headers (hide tech stack)"
+        ],
+        "code_fix": "@app.after_request\ndef add_security_headers(resp):\n    resp.headers['Content-Security-Policy'] = \"default-src 'self'\"\n    resp.headers['X-Frame-Options'] = 'DENY'\n    resp.headers['X-Content-Type-Options'] = 'nosniff'\n    resp.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'\n    return resp",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      },
+      {
+        "type": "CORS Misconfiguration",
+        "cvss_score": 8.1,
+        "cvss_vector": "AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:N",
+        "attack_scenario": "Attacker exploits CORS Misconfiguration at https://www.caricite.com/ using: Origin: https://evil.com",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Whitelist only specific trusted origins \u2014 never reflect Origin header blindly",
+          "Never combine Access-Control-Allow-Origin: * with credentials",
+          "Reject 'null' origin in production",
+          "Set Access-Control-Allow-Methods to the minimum required methods"
+        ],
+        "code_fix": "# Flask-CORS \u2014 whitelist specific origins\nfrom flask_cors import CORS\nCORS(app, origins=['https://trusted-site.com'], supports_credentials=True)",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      },
+      {
+        "type": "DNS/Subdomain Security",
+        "cvss_score": 4.0,
+        "cvss_vector": "AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+        "attack_scenario": "Attacker exploits DNS/Subdomain Security at caricite.com using: Subdomain Enumeration",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Disable DNS zone transfer (AXFR) on all nameservers",
+          "Implement SPF, DKIM, and DMARC email security records",
+          "Inventory and monitor subdomains for takeover risks"
+        ],
+        "code_fix": "",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      },
+      {
+        "type": "WAF Detection",
+        "cvss_score": 3.7,
+        "cvss_vector": "AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N",
+        "attack_scenario": "Attacker exploits WAF Detection at https://www.caricite.com/ using: WAF Detected",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Deploy a WAF (AWS WAF, Cloudflare, ModSecurity) for defense-in-depth",
+          "Configure WAF rules for OWASP Top 10 patterns"
+        ],
+        "code_fix": "",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      },
+      {
+        "type": "Nmap Port/Service Scan",
+        "cvss_score": 3.1,
+        "cvss_vector": "AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:N/A:N",
+        "attack_scenario": "Attacker exploits Nmap Port/Service Scan at www.caricite.com:80/tcp using: open port 80",
+        "business_impact": "Potential data breach, system compromise, and reputational damage.",
+        "remediation": [
+          "Review and sanitise all user-supplied input for this feature"
+        ],
+        "code_fix": "",
+        "confidence_score": 0.5,
+        "confidence_label": "medium"
+      }
+    ],
+    "top_priorities": [
+      "Immediately patch SQL injection and command injection vulnerabilities",
+      "Sanitise all output to prevent XSS attacks",
+      "Implement proper authentication controls and password hashing"
+    ],
+    "positive_findings": [],
+    "exploit_chains": []
+  },
+  "findings": [
+    {
+      "type": "Authentication",
+      "endpoint": "https://www.caricite.com/login",
+      "payload": "No rate limiting on login \u2014 brute force allowed",
+      "evidence": "No rate limiting on login \u2014 brute force allowed",
+      "severity": "MEDIUM",
+      "owasp_id": "A07:2021",
+      "owasp_name": "Identification and Authentication Failures",
+      "cwe_id": "CWE-287",
+      "pci_dss": "PCI-DSS 8.2 / 8.3",
+      "nist_800_53": "IA-2 (Identification and Authentication)",
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Missing: content-security-policy",
+      "evidence": "Missing Content-Security-Policy \u2014 allows XSS",
+      "severity": "HIGH",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8",
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Missing: strict-transport-security",
+      "evidence": "Missing HSTS \u2014 protocol downgrade possible",
+      "severity": "HIGH",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Missing: x-frame-options",
+      "evidence": "Missing X-Frame-Options \u2014 clickjacking possible",
+      "severity": "MEDIUM",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Missing: permissions-policy",
+      "evidence": "Missing Permissions-Policy",
+      "severity": "LOW",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Missing: x-xss-protection",
+      "evidence": "Missing X-XSS-Protection (legacy browsers)",
+      "severity": "LOW",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8"
+    },
+    {
+      "type": "HTTP Security Headers",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Info Disclosure",
+      "evidence": "Server reveals tech stack: server: cloudflare",
+      "severity": "MEDIUM",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "PCI-DSS 6.2.4",
+      "nist_800_53": "SC-28 / SC-8"
+    },
+    {
+      "type": "CORS Misconfiguration",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "Origin: https://evil.com",
+      "evidence": "Wildcard CORS (ACAO: *) \u2014 any site can read responses",
+      "severity": "HIGH",
+      "owasp_id": "A01:2021",
+      "owasp_name": "Broken Access Control",
+      "cwe_id": "CWE-942",
+      "pci_dss": "",
+      "nist_800_53": "SC-8 / AC-4",
+      "cve_ids": [
+        "CVE-2021-22145"
+      ],
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    },
+    {
+      "type": "DNS/Subdomain Security",
+      "endpoint": "caricite.com",
+      "payload": "Subdomain Enumeration",
+      "evidence": "Found 1 subdomain(s): admin.caricite.com",
+      "severity": "LOW",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "",
+      "pci_dss": "",
+      "nist_800_53": "",
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    },
+    {
+      "type": "WAF Detection",
+      "endpoint": "https://www.caricite.com/",
+      "payload": "WAF Detected",
+      "evidence": "WAF identified: Cloudflare (attack request returned 200)",
+      "severity": "INFO",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "CWE-693",
+      "pci_dss": "",
+      "nist_800_53": "",
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    },
+    {
+      "type": "Nmap Port/Service Scan",
+      "endpoint": "www.caricite.com:80/tcp",
+      "payload": "open port 80",
+      "evidence": "Service: http Cloudflare http proxy",
+      "severity": "LOW",
+      "owasp_id": "A05:2021",
+      "owasp_name": "Security Misconfiguration",
+      "cwe_id": "",
+      "pci_dss": "",
+      "nist_800_53": "",
+      "confidence_score": 0.5,
+      "confidence_label": "medium"
+    }
+  ]
+}

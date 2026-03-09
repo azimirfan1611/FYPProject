@@ -18,6 +18,11 @@ services:
       - FLASK_ENV=development
     networks:
       - pentest-net
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/')"]
       interval: 10s
@@ -41,6 +46,11 @@ services:
       - "8090"
     networks:
       - pentest-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
     healthcheck:
       test: ["CMD", "curl", "-sf",
              "http://localhost:8090/JSON/core/view/version/?apikey=${ZAP_KEY:-autopentest_changeme_key}"]
@@ -48,6 +58,48 @@ services:
       timeout: 10s
       retries: 10
       start_period: 30s
+
+  msf:
+    image: metasploitframework/metasploit-framework:latest
+    container_name: msf
+    entrypoint: ["/bin/sh", "-c", "msfrpcd -P $$MSF_PASS -S false -a 0.0.0.0 -p 55553 -U msf"]
+    expose:
+      - "55553"
+    environment:
+      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+    networks:
+      - pentest-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+
+  pentester:
+    build:
+      context: ./pentester
+      dockerfile: Dockerfile
+    container_name: pentester
+    environment:
+      - TARGET_URL=http://webapp:5000
+      - ZAP_URL=http://zap:8090
+      - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
+      - MSF_HOST=msf
+      - MSF_PORT=55553
+      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - REPORT_DIR=/reports
+      - SHANNON_MODE=${SHANNON_MODE:-true}
+    volumes:
+      - ./reports:/reports
+    depends_on:
+      webapp:
+        condition: service_healthy
+      zap:
+        condition: service_healthy
+    networks:
+      - pentest-net
 
   dashboard:
     build:
@@ -59,6 +111,9 @@ services:
     environment:
       - ZAP_URL=http://zap:8090
       - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
+      - MSF_HOST=msf
+      - MSF_PORT=55553
+      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
       - REPORT_DIR=/reports
@@ -73,8 +128,14 @@ services:
       - ./reports:/reports
     networks:
       - pentest-net
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
     depends_on:
-      - zap
+      zap:
+        condition: service_healthy
 
 networks:
   pentest-net:

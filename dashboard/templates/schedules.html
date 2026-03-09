@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Scheduled Scans — AutoPenTest{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-white mb-1">Scheduled Scans</h1>
+  <p class="text-gray-400 text-sm">Automatically run scans on a recurring schedule.</p>
+</div>
+
+{% if not scheduler_available %}
+<div class="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 mb-6">
+  <p class="text-yellow-400 text-sm">⚠ Scheduler unavailable. Install APScheduler: <code>pip install apscheduler</code></p>
+</div>
+{% endif %}
+
+<!-- Add Schedule Form -->
+<div class="terminal rounded-xl p-6 mb-8 max-w-2xl">
+  <h2 class="text-cyber-blue font-bold text-lg mb-4">Add New Schedule</h2>
+  <form method="POST" action="/schedules/add">
+    {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+    <div class="mb-4">
+      <label class="block text-gray-400 text-sm mb-1">Target URL</label>
+      <input type="text" name="url" required placeholder="https://target.com"
+             class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white
+                    focus:outline-none focus:border-cyber-blue transition">
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-400 text-sm mb-1">Schedule (cron: minute hour day_of_week)</label>
+      <input type="text" name="cron" required placeholder="0 2 mon"
+             class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white
+                    focus:outline-none focus:border-cyber-blue transition">
+      <p class="text-xs text-gray-600 mt-1">Examples: "0 2 mon" = Mon 2am, "0 8 *" = Daily 8am, "0 0 mon,fri" = Mon+Fri midnight</p>
+    </div>
+    <button type="submit"
+            class="bg-cyber-green text-black font-bold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+      Add Schedule
+    </button>
+  </form>
+</div>
+
+<!-- Schedule List -->
+{% if schedules %}
+<div class="terminal rounded-xl p-6">
+  <h2 class="text-white font-bold text-lg mb-4">Active Schedules ({{ schedules|length }})</h2>
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-gray-800 text-gray-400">
+        <th class="text-left py-2 pr-4">ID</th>
+        <th class="text-left py-2 pr-4">Target</th>
+        <th class="text-left py-2 pr-4">Schedule</th>
+        <th class="text-left py-2 pr-4">Last Run</th>
+        <th class="text-left py-2">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in schedules %}
+      <tr class="border-b border-gray-900 hover:bg-gray-900/50">
+        <td class="py-3 pr-4 font-mono text-cyber-blue">{{ s.id }}</td>
+        <td class="py-3 pr-4 text-white">{{ s.url }}</td>
+        <td class="py-3 pr-4 font-mono text-gray-300">{{ s.cron }}</td>
+        <td class="py-3 pr-4 text-gray-500 text-xs">{{ s.last_run[:16] if s.last_run else 'Never' }}</td>
+        <td class="py-3">
+          <form method="POST" action="/schedules/{{ s.id }}/delete" style="display:inline">
+            {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
+            <button type="submit" onclick="return confirm('Delete schedule {{ s.id }}?')"
+                    class="text-xs bg-red-900 hover:bg-red-800 px-3 py-1 rounded text-red-300 transition">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="terminal rounded-xl p-12 text-center text-gray-600">
+  <p>No schedules configured yet.</p>
+</div>
+{% endif %}
+
+<div class="mt-4">
+  <a href="/" class="text-cyber-blue hover:underline text-sm">← Back to Dashboard</a>
+</div>
+{% endblock %}

@@ -13,6 +13,13 @@ import threading
 from flask import (Flask, render_template, request, redirect,
                    url_for, jsonify, Response, session, flash)
 
+try:
+    from flask_socketio import SocketIO, join_room, emit
+    _SOCKETIO = True
+except ImportError:
+    socketio = None
+    _SOCKETIO = False
+
 sys.path.insert(0, "/app/pentest_lib")
 _local = os.path.join(os.path.dirname(__file__), "..", "pentester")
 if os.path.exists(_local) and _local not in sys.path:
@@ -20,15 +27,39 @@ if os.path.exists(_local) and _local not in sys.path:
 
 from scanner_runner import run_scan_async, SCANS, SCANS_LOCK, evict_old_scans
 
+import logging as _logging
+_log_handler = _logging.StreamHandler()
+_log_handler.setFormatter(_logging.Formatter('{"ts":"%(asctime)s","level":"%(levelname)s","msg":"%(message)s"}'))
+_logging.basicConfig(handlers=[_log_handler], level=_logging.INFO, force=True)
+logger = _logging.getLogger(__name__)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+if _SOCKETIO:
+    from flask_socketio import SocketIO, join_room, emit
+    socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+try:
+    from flask_wtf.csrf import CSRFProtect
+    csrf = CSRFProtect(app)
+except ImportError:
+    pass
+app.config["WTF_CSRF_ENABLED"] = True
 
 REPORT_DIR   = os.environ.get("REPORT_DIR", "/reports")
 JWT_SECRET   = os.environ.get("JWT_SECRET",  secrets.token_hex(32))
 JWT_EXPIRY_H = int(os.environ.get("JWT_EXPIRY_HOURS", "24"))
 ADMIN_USER   = os.environ.get("ADMIN_USER", "admin")
 ADMIN_PASS   = os.environ.get("ADMIN_PASS", "changeme123!")
+ADMIN_ROLE = os.environ.get("ADMIN_ROLE", "admin")  # admin | analyst | viewer
+_USER_ROLES = {ADMIN_USER: ADMIN_ROLE}
 os.makedirs(REPORT_DIR, exist_ok=True)
+
+# Start background scheduler
+try:
+    from scheduler import start as _start_scheduler
+    _start_scheduler()
+except Exception:
+    pass
 
 # ── Rate limiting (in-process) ─────────────────────────────────────────────
 _rate_lock = threading.Lock()
@@ -47,6 +78,39 @@ def _check_rate(ip: str, bucket: str, limit: int) -> bool:
             return False
         dq.append(now)
         return True
+
+# ── Account lockout ────────────────────────────────────────────────────────
+_lockout_lock = threading.Lock()
+_failed_attempts: dict = {}  # username -> (count, first_attempt_time)
+LOCKOUT_ATTEMPTS = int(os.environ.get("LOCKOUT_ATTEMPTS", "5"))
+LOCKOUT_MINUTES  = int(os.environ.get("LOCKOUT_MINUTES", "30"))
+
+def _is_locked_out(username: str) -> bool:
+    with _lockout_lock:
+        entry = _failed_attempts.get(username)
+        if not entry:
+            return False
+        count, first_time = entry
+        if count >= LOCKOUT_ATTEMPTS:
+            elapsed = (datetime.utcnow() - first_time).total_seconds() / 60
+            if elapsed < LOCKOUT_MINUTES:
+                return True
+            else:
+                del _failed_attempts[username]
+        return False
+
+def _record_failed(username: str):
+    with _lockout_lock:
+        entry = _failed_attempts.get(username)
+        if entry:
+            count, first_time = entry
+            _failed_attempts[username] = (count + 1, first_time)
+        else:
+            _failed_attempts[username] = (1, datetime.utcnow())
+
+def _clear_failed(username: str):
+    with _lockout_lock:
+        _failed_attempts.pop(username, None)
 
 # ── SSRF Protection ────────────────────────────────────────────────────────
 _PRIVATE_NETS = [
@@ -96,6 +160,9 @@ try:
 except ImportError:
     _JWT_AVAILABLE = False
 
+_token_blacklist: set = set()
+_blacklist_lock = threading.Lock()
+
 def _make_token(username: str) -> str:
     if not _JWT_AVAILABLE:
         return f"simple:{username}"
@@ -107,6 +174,9 @@ def _make_token(username: str) -> str:
 def _verify_token(token: str):
     if not token:
         return None
+    with _blacklist_lock:
+        if token in _token_blacklist:
+            return None
     if not _JWT_AVAILABLE:
         return token.replace("simple:", "") if token.startswith("simple:") else None
     try:
@@ -126,6 +196,24 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+def role_required(*allowed_roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            token = session.get("token") or request.headers.get("X-Auth-Token")
+            username = _verify_token(token)
+            if not username:
+                return jsonify({"error": "authentication required"}), 401
+            role = _USER_ROLES.get(username, "viewer")
+            if role not in allowed_roles:
+                if request.is_json:
+                    return jsonify({"error": "insufficient privileges"}), 403
+                flash("Insufficient privileges to perform this action.", "error")
+                return redirect(url_for("index"))
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
+
 # ── Auth Routes ────────────────────────────────────────────────────────────
 @app.route("/login", methods=["GET", "POST"])
 def login_page():
@@ -137,16 +225,26 @@ def login_page():
         else:
             u = request.form.get("username", "")
             p = request.form.get("password", "")
-            u_ok = secrets.compare_digest(u.encode(), ADMIN_USER.encode())
-            p_ok = secrets.compare_digest(p.encode(), ADMIN_PASS.encode())
-            if u_ok and p_ok:
-                session["token"] = _make_token(u)
-                return redirect(url_for("index"))
-            error = "Invalid credentials"
+            if _is_locked_out(u):
+                error = f"Account locked. Try again in {LOCKOUT_MINUTES} minutes."
+            else:
+                u_ok = secrets.compare_digest(u.encode(), ADMIN_USER.encode())
+                p_ok = secrets.compare_digest(p.encode(), ADMIN_PASS.encode())
+                logger.info(f"Login attempt: user={u} ip={ip} success={u_ok and p_ok}")
+                if u_ok and p_ok:
+                    session["token"] = _make_token(u)
+                    _clear_failed(u)
+                    return redirect(url_for("index"))
+                error = "Invalid credentials"
+                _record_failed(u)
     return render_template("login.html", error=error)
 
 @app.route("/logout")
 def logout():
+    token = session.get("token")
+    if token:
+        with _blacklist_lock:
+            _token_blacklist.add(token)
     session.clear()
     return redirect(url_for("login_page"))
 
@@ -155,12 +253,20 @@ def logout():
 @login_required
 def index():
     evict_old_scans()
+    page     = int(request.args.get("page", 1))
+    per_page = int(request.args.get("per_page", 25))
     with SCANS_LOCK:
-        history = sorted(SCANS.values(), key=lambda s: s["started_at"], reverse=True)
-    return render_template("index.html", scans=history)
+        all_scans = sorted(SCANS.values(), key=lambda s: s["started_at"], reverse=True)
+    total   = len(all_scans)
+    start   = (page - 1) * per_page
+    history = all_scans[start:start + per_page]
+    total_pages = max(1, (total + per_page - 1) // per_page)
+    return render_template("index.html", scans=history,
+                           page=page, total_pages=total_pages, total=total)
 
 @app.route("/scan", methods=["POST"])
 @login_required
+@role_required("admin", "analyst")
 def start_scan():
     ip = request.remote_addr or "unknown"
     if not _check_rate(ip, "scan", SCAN_LIMIT):
@@ -188,6 +294,22 @@ def scan_view(scan_id):
         return "Scan not found", 404
     return render_template("scan.html", scan=scan)
 
+def _calc_eta(scan: dict) -> int:
+    """Rough ETA in seconds based on progress."""
+    pct = scan.get("progress_pct", 0)
+    if pct <= 0 or scan["status"] != "running":
+        return 0
+    started = scan.get("started_at", "")
+    try:
+        elapsed = (datetime.utcnow() - datetime.fromisoformat(started)).total_seconds()
+        if pct > 0:
+            total_est = elapsed / (pct / 100)
+            return max(0, int(total_est - elapsed))
+    except Exception:
+        pass
+    return 0
+
+
 @app.route("/scan/<scan_id>/status")
 @login_required
 def scan_status(scan_id):
@@ -204,6 +326,7 @@ def scan_status(scan_id):
         "total_findings": scan.get("total_findings", 0),
         "risk_rating":    scan.get("risk_rating", ""),
         "error":          scan.get("error"),
+        "eta_seconds":    _calc_eta(scan),
     })
 
 @app.route("/scan/<scan_id>/logs")
@@ -275,6 +398,7 @@ def download_pdf(scan_id):
 
 @app.route("/scan/<scan_id>/cancel", methods=["POST"])
 @login_required
+@role_required("admin", "analyst")
 def cancel_scan(scan_id):
     with SCANS_LOCK:
         scan = SCANS.get(scan_id)
@@ -355,5 +479,83 @@ def api_get_token():
         return jsonify({"token": _make_token(u)})
     return jsonify({"error": "invalid credentials"}), 401
 
+
+@app.route("/compare/<scan_id1>/<scan_id2>")
+@login_required
+def compare_scans(scan_id1, scan_id2):
+    with SCANS_LOCK:
+        s1 = SCANS.get(scan_id1)
+        s2 = SCANS.get(scan_id2)
+    if not s1 or not s2:
+        return "One or both scans not found", 404
+
+    def _finding_key(f):
+        return f"{f.get('type','').lower()}|{f.get('endpoint','').lower()}"
+
+    f1_keys = {_finding_key(f) for f in (s1.get("findings") or [])}
+    f2_keys = {_finding_key(f) for f in (s2.get("findings") or [])}
+    new_findings   = [f for f in (s2.get("findings") or []) if _finding_key(f) not in f1_keys]
+    fixed_findings = [f for f in (s1.get("findings") or []) if _finding_key(f) not in f2_keys]
+    common_findings = [f for f in (s2.get("findings") or []) if _finding_key(f) in f1_keys]
+
+    return render_template("compare.html",
+        scan1=s1, scan2=s2,
+        new_findings=new_findings,
+        fixed_findings=fixed_findings,
+        common_findings=common_findings,
+    )
+
+
+# ── Scheduler Routes ───────────────────────────────────────────────────────
+@app.route("/schedules")
+@login_required
+def schedules_page():
+    try:
+        from scheduler import list_schedules
+        scheds = list_schedules()
+    except Exception:
+        scheds = []
+    return render_template("schedules.html", schedules=scheds,
+                           scheduler_available=True)
+
+@app.route("/schedules/add", methods=["POST"])
+@login_required
+@role_required("admin")
+def add_schedule_route():
+    url      = request.form.get("url", "").strip()
+    cron     = request.form.get("cron", "").strip()
+    sched_id = str(uuid.uuid4())[:8]
+    if url and cron:
+        try:
+            from scheduler import add_schedule
+            add_schedule(sched_id, url, cron, REPORT_DIR)
+            flash(f"Schedule {sched_id} created.", "success")
+        except Exception as e:
+            flash(f"Failed: {e}", "error")
+    return redirect(url_for("schedules_page"))
+
+@app.route("/schedules/<sched_id>/delete", methods=["POST"])
+@login_required
+@role_required("admin")
+def delete_schedule(sched_id):
+    try:
+        from scheduler import remove_schedule
+        remove_schedule(sched_id)
+        flash(f"Schedule {sched_id} deleted.", "success")
+    except Exception as e:
+        flash(f"Failed: {e}", "error")
+    return redirect(url_for("schedules_page"))
+
+
+if _SOCKETIO and socketio:
+    @socketio.on("subscribe_scan")
+    def on_subscribe(data):
+        scan_id = data.get("scan_id", "")
+        join_room(f"scan_{scan_id}")
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=False, threaded=True)
+    if _SOCKETIO and socketio:
+        socketio.run(app, host="0.0.0.0", port=8080, debug=False, allow_unsafe_werkzeug=True)
+    else:
+        app.run(host="0.0.0.0", port=8080, debug=False, threaded=True)
