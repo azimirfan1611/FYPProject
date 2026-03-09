@@ -1,0 +1,28 @@
+# Secrets — never commit real credentials
+.env
+*.env
+.env.local
+.env.production
+
+# Reports (may contain sensitive scan data)
+reports/*.html
+reports/*.pdf
+reports/*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+
+# Docker volumes / temp
+*.log
+/tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
