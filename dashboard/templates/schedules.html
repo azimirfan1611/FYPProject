@@ -57,7 +57,7 @@
         <td class="py-3 pr-4 font-mono text-cyber-blue">{{ s.id }}</td>
         <td class="py-3 pr-4 text-white">{{ s.url }}</td>
         <td class="py-3 pr-4 font-mono text-gray-300">{{ s.get('display_format', s.cron) }}</td>
-        <td class="py-3 pr-4 text-gray-500 text-xs">{{ s.last_run[:16] if s.last_run else 'Never' }}</td>
+        <td class="py-3 pr-4 text-gray-500 text-xs">{{ s.last_run | to_local_time('full') if s.last_run else 'Never' }}</td>
         <td class="py-3 flex gap-2">
           <!-- View button - disabled if no scan -->
           {% if s.get('last_scan_id') %}

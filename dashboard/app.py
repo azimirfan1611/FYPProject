@@ -9,9 +9,13 @@ from urllib.parse import urlparse
 from functools import wraps
 from collections import defaultdict, deque
 import threading
+import pytz
 
 from flask import (Flask, render_template, request, redirect,
                    url_for, jsonify, Response, session, flash)
+
+from timezone_utils import (get_user_timezone, utc_to_local, format_scan_time, 
+                           format_scan_duration, get_timezone_offset, COMMON_TIMEZONES)
 
 try:
     from flask_socketio import SocketIO, join_room, emit
@@ -67,10 +71,29 @@ def inject_authenticated():
     """Make is_authenticated and utilities available in all templates"""
     from ai_chatbot import get_chatbot
     chatbot = get_chatbot()
+    
+    # Get user's timezone from session or browser
+    user_tz = get_user_timezone(session)
+    
     return {
         'is_authenticated': bool(session.get('token')),
-        'cron_to_readable': chatbot.cron_to_readable if chatbot else lambda x: x
+        'cron_to_readable': chatbot.cron_to_readable if chatbot else lambda x: x,
+        'user_timezone': user_tz,
+        'timezone_offset': get_timezone_offset(user_tz),
     }
+
+# Register Jinja filters for timezone conversion
+@app.template_filter('to_local_time')
+def jinja_to_local_time(utc_str, format_style='full'):
+    """Jinja filter: Convert UTC time to local time"""
+    user_tz = get_user_timezone(session)
+    return format_scan_time(utc_str, user_tz, format_style)
+
+@app.template_filter('scan_duration')
+def jinja_scan_duration(started_str, completed_str=None):
+    """Jinja filter: Format scan duration"""
+    user_tz = get_user_timezone(session)
+    return format_scan_duration(started_str, completed_str, user_tz)
 
 REPORT_DIR   = os.environ.get("REPORT_DIR", "/reports")
 JWT_SECRET   = os.environ.get("JWT_SECRET",  secrets.token_hex(32))
@@ -263,11 +286,31 @@ def login_page():
                 logger.info(f"Login attempt: user={u} ip={ip} success={u_ok and p_ok}")
                 if u_ok and p_ok:
                     session["token"] = _make_token(u)
+                    # Set default timezone if not already set
+                    if 'timezone' not in session:
+                        session['timezone'] = request.form.get("timezone", "UTC")
                     _clear_failed(u)
                     return redirect(url_for("index"))
                 error = "Invalid credentials"
                 _record_failed(u)
     return render_template("login.html", error=error, is_authenticated=False)
+
+@app.route("/api/set-timezone", methods=["POST"])
+@login_required
+def set_timezone():
+    """Set user's timezone from browser detection"""
+    data = request.get_json() or {}
+    timezone = data.get('timezone', 'UTC')
+    
+    # Validate timezone
+    try:
+        pytz.timezone(timezone)
+        session['timezone'] = timezone
+        logger.info(f"Timezone set for user: {timezone}")
+        return jsonify({"success": True, "timezone": timezone})
+    except Exception as e:
+        logger.warning(f"Invalid timezone: {timezone} - {e}")
+        return jsonify({"error": "Invalid timezone"}), 400
 
 @app.route("/logout")
 def logout():

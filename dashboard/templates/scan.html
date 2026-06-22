@@ -55,9 +55,9 @@
         <div class="font-bold text-white" id="phaseText">{{ scan.phase }}</div>
         <span id="etaText" class="text-xs text-gray-500 ml-2"></span>
         <div class="text-sm text-gray-400">
-          Started: {{ scan.started_at[:16] | replace('T',' ') }} UTC
+          Started: {{ scan.started_at | to_local_time('full') }}
           {% if scan.completed_at %}
-            · Finished: {{ scan.completed_at[:16] | replace('T',' ') }} UTC
+            · Finished: {{ scan.completed_at | to_local_time('full') }}
           {% endif %}
         </div>
       </div>
