@@ -14,23 +14,10 @@
     }}}
   }
 </script>
-<style>
-  body { background: #0a0e17; color: #c9d1d9; font-family: 'Segoe UI', monospace; }
-  .terminal { background: #0d1117; border: 1px solid #30363d; font-family: 'Courier New', monospace; }
-  .glow-green { text-shadow: 0 0 10px #00ff41; }
-  .glow-red   { text-shadow: 0 0 10px #ff003c; }
-  .glow-blue  { text-shadow: 0 0 10px #00b4d8; }
-  .badge-critical { background:#7f1d1d; color:#fca5a5; }
-  .badge-high     { background:#7c2d12; color:#fdba74; }
-  .badge-medium   { background:#713f12; color:#fde68a; }
-  .badge-low      { background:#14532d; color:#86efac; }
-  .badge-info     { background:#1e3a5f; color:#93c5fd; }
-  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
-  .pulse-dot { animation: pulse-dot 1.5s infinite; }
-  ::-webkit-scrollbar { width:6px; }
-  ::-webkit-scrollbar-track { background:#0d1117; }
-  ::-webkit-scrollbar-thumb { background:#30363d; border-radius:3px; }
-</style>
+<!-- Premium Theme CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+<!-- AI Chatbox CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chatbox.css') }}">
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -55,9 +42,9 @@
 {% if messages %}
 <div class="max-w-6xl mx-auto px-4 pt-4">
   {% for category, message in messages %}
-  <div class="mb-2 px-4 py-3 rounded-lg text-sm
-    {% if category == 'error' %}bg-red-900/30 border border-red-700 text-red-400
-    {% else %}bg-green-900/30 border border-green-700 text-green-400{% endif %}">
+  <div class="mb-2 px-4 py-3 rounded-lg text-sm animate-fadeInUp"
+    {% if category == 'error' %}style="background: linear-gradient(135deg, rgba(255, 0, 60, 0.2), rgba(255, 0, 110, 0.15)); border: 1px solid rgba(255, 0, 60, 0.4); color: #ff6b9d;"
+    {% else %}style="background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(0, 242, 254, 0.15)); border: 1px solid rgba(0, 255, 65, 0.4); color: #66ff99;"{% endif %}>
     {{ message }}
   </div>
   {% endfor %}
@@ -68,5 +55,15 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
   {% block content %}{% endblock %}
 </div>
+
+<!-- AI Chatbox (Only for logged-in users) -->
+{% if is_authenticated %}
+{% include 'chat_sidebar.html' %}
+<script src="{{ url_for('static', filename='js/chatbox.js') }}"></script>
+{% endif %}
+
+<!-- Advanced Scroll Animations -->
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+
 </body>
 </html>

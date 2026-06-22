@@ -80,7 +80,7 @@
             {% if scan.status == 'complete' %}
               <span class="text-green-400">✓ Complete</span>
             {% elif scan.status == 'running' %}
-              <span class="text-yellow-400 pulse-dot">⟳ Running</span>
+              <span class="text-yellow-400"><span class="spin">⟳</span> Running</span>
             {% elif scan.status == 'error' %}
               <span class="text-red-400">✗ Error</span>
             {% elif scan.status == 'cancelled' %}
@@ -146,7 +146,6 @@
 </div>
 {% else %}
 <div class="terminal rounded-xl p-12 text-center text-gray-600">
-  <div class="text-5xl mb-3">🔍</div>
   <p>No scans yet. Enter a target URL above to begin.</p>
 </div>
 {% endif %}

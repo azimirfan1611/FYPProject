@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Scan Results — AutoPenTest{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-white mb-1">Scan Results</h1>
+  <p class="text-gray-400 text-sm">Scan ID: <code class="text-cyber-blue">{{ scan_id }}</code></p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+  <div class="terminal rounded-xl p-4">
+    <p class="text-gray-500 text-sm">Status</p>
+    <p class="text-xl font-bold text-cyber-green">{{ scan.get('status', 'unknown')|upper }}</p>
+  </div>
+  <div class="terminal rounded-xl p-4">
+    <p class="text-gray-500 text-sm">Total Findings</p>
+    <p class="text-xl font-bold text-cyber-blue">{{ vuln_count }}</p>
+  </div>
+  <div class="terminal rounded-xl p-4">
+    <p class="text-gray-500 text-sm">Started</p>
+    <p class="text-sm text-gray-300">{{ scan.get('start_time', 'N/A')[:10] }}</p>
+  </div>
+  <div class="terminal rounded-xl p-4">
+    <p class="text-gray-500 text-sm">Target</p>
+    <p class="text-sm text-cyber-blue">{{ scan.get('target', 'N/A') }}</p>
+  </div>
+</div>
+
+<!-- Findings Summary -->
+<div class="terminal rounded-xl p-6 mb-6">
+  <h2 class="text-lg font-bold text-cyber-blue mb-4">Findings by Severity</h2>
+  <div class="space-y-3">
+    {% set findings_dict = scan.get('findings', {}) %}
+    {% if findings_dict %}
+      {% for severity, issues in findings_dict.items() %}
+        {% if issues %}
+        <div class="flex justify-between items-center p-3 bg-gray-900 rounded">
+          <span class="text-white capitalize">{{ severity }}</span>
+          <span class="text-lg font-bold 
+            {% if severity == 'critical' %}text-red-500
+            {% elif severity == 'high' %}text-orange-500
+            {% elif severity == 'medium' %}text-yellow-500
+            {% else %}text-green-500{% endif %}">
+            {{ issues|length }}
+          </span>
+        </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+    <p class="text-gray-500">No findings yet</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="flex gap-4">
+  <a href="{{ url_for('view_report', scan_id=scan_id) }}" 
+     class="bg-cyber-green text-black font-bold px-6 py-2 rounded-lg hover:bg-green-400 transition">
+    View Full Report
+  </a>
+  <a href="{{ url_for('dashboard') }}" 
+     class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-600 transition">
+    Back to Dashboard
+  </a>
+</div>
+{% endblock %}

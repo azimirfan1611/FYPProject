@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Scan Report — AutoPenTest{% endblock %}
+{% block content %}
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-white mb-1">Security Scan Report</h1>
+  <p class="text-gray-400 text-sm">
+    Target: <code class="text-cyber-blue">{{ scan.get('target', 'N/A') }}</code> | 
+    Scan ID: <code class="text-cyber-blue">{{ scan_id }}</code>
+  </p>
+</div>
+
+<!-- Report Summary -->
+<div class="terminal rounded-xl p-6 mb-6">
+  <h2 class="text-lg font-bold text-cyber-green mb-4">Executive Summary</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div>
+      <p class="text-gray-500 text-sm">Total Vulnerabilities</p>
+      <p class="text-2xl font-bold text-cyber-blue">
+        {% set total = 0 %}
+        {% for severity, issues in findings.items() %}
+          {% set total = total + issues|length %}
+        {% endfor %}
+        {{ total }}
+      </p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Critical</p>
+      <p class="text-2xl font-bold text-red-500">{{ findings.get('critical', [])|length }}</p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">High</p>
+      <p class="text-2xl font-bold text-orange-500">{{ findings.get('high', [])|length }}</p>
+    </div>
+    <div>
+      <p class="text-gray-500 text-sm">Medium</p>
+      <p class="text-2xl font-bold text-yellow-500">{{ findings.get('medium', [])|length }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Findings -->
+{% for severity, issues in findings.items() %}
+  {% if issues %}
+  <div class="terminal rounded-xl p-6 mb-6">
+    <h2 class="text-lg font-bold mb-4 
+      {% if severity == 'critical' %}text-red-500
+      {% elif severity == 'high' %}text-orange-500
+      {% elif severity == 'medium' %}text-yellow-500
+      {% else %}text-green-500{% endif %}">
+      {{ severity|upper }} Severity Issues ({{ issues|length }})
+    </h2>
+    
+    <div class="space-y-4">
+      {% for issue in issues %}
+      <div class="bg-gray-900 rounded-lg p-4 border-l-4
+        {% if severity == 'critical' %}border-red-500
+        {% elif severity == 'high' %}border-orange-500
+        {% elif severity == 'medium' %}border-yellow-500
+        {% else %}border-green-500{% endif %}">
+        <h3 class="text-white font-bold mb-2">{{ issue.get('title', 'Unknown Issue') }}</h3>
+        <p class="text-gray-400 text-sm mb-2">{{ issue.get('description', 'No description') }}</p>
+        {% if issue.get('affected_endpoint') %}
+        <p class="text-gray-500 text-xs">
+          <strong>Endpoint:</strong> <code class="text-cyber-blue">{{ issue.get('affected_endpoint') }}</code>
+        </p>
+        {% endif %}
+        {% if issue.get('recommendation') %}
+        <p class="text-gray-500 text-xs mt-2">
+          <strong>Recommendation:</strong> {{ issue.get('recommendation') }}
+        </p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+
+<!-- Empty State -->
+{% set has_findings = false %}
+{% for severity, issues in findings.items() %}
+  {% if issues|length > 0 %}
+    {% set has_findings = true %}
+  {% endif %}
+{% endfor %}
+
+{% if not has_findings %}
+<div class="terminal rounded-xl p-12 text-center text-gray-600">
+  <p>✓ No vulnerabilities found in this scan.</p>
+</div>
+{% endif %}
+
+<div class="flex gap-4">
+  <a href="{{ url_for('scan_view', scan_id=scan_id) }}" 
+     class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-600 transition">
+    Back to Results
+  </a>
+  <a href="{{ url_for('dashboard') }}" 
+     class="bg-gray-700 text-white font-bold px-6 py-2 rounded-lg hover:bg-gray-600 transition">
+    Back to Dashboard
+  </a>
+</div>
+{% endblock %}

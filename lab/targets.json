@@ -1,0 +1,61 @@
+{
+  "target_url": "https://localhost:8443",
+  "services": [
+    {
+      "name": "edge",
+      "role": "reverse-proxy",
+      "http": 8081,
+      "https": 8443,
+      "notes": "Publishes the lab over HTTP and HTTPS with a self-signed certificate."
+    },
+    {
+      "name": "app",
+      "role": "vulnerable web app",
+      "internal_port": 5000,
+      "notes": "Existing Flask target with SQLi, XSS, IDOR, command injection, traversal, and auth issues."
+    },
+    {
+      "name": "db",
+      "role": "database service",
+      "internal_port": 5432,
+      "notes": "Internal Postgres instance for port and service verification."
+    },
+    {
+      "name": "redis",
+      "role": "cache service",
+      "internal_port": 6379,
+      "notes": "Password-protected Redis instance for auth and exposure checks."
+    },
+    {
+      "name": "uploads",
+      "role": "directory-listing target",
+      "internal_port": 80,
+      "notes": "Static file server with autoindex enabled."
+    },
+    {
+      "name": "admin",
+      "role": "exposed admin panel",
+      "internal_port": 80,
+      "notes": "Static admin surface with no access control."
+    }
+  ],
+  "expected_findings": [
+    {"tool": "nmap", "target": "edge", "expected": "8081 and 8443 open"},
+    {"tool": "ssl_scanner", "target": "edge:8443", "expected": "self-signed cert and baseline TLS warnings"},
+    {"tool": "nikto", "target": "edge", "expected": "server token and exposed static paths"},
+    {"tool": "headers_scanner", "target": "edge", "expected": "missing hardening headers such as HSTS and CSP"},
+    {"tool": "waf_scanner", "target": "edge", "expected": "no WAF present"},
+    {"tool": "sql_injection", "target": "app", "expected": "login and search SQL injection"},
+    {"tool": "xss_scanner", "target": "app", "expected": "reflected and stored XSS"},
+    {"tool": "auth_tester", "target": "app", "expected": "weak auth and no lockout"},
+    {"tool": "idor_scanner", "target": "app", "expected": "profile and API IDOR"},
+    {"tool": "command_injection", "target": "app", "expected": "ping endpoint command injection"},
+    {"tool": "dir_traversal", "target": "app", "expected": "files endpoint traversal"},
+    {"tool": "cors_scanner", "target": "app", "expected": "no permissive CORS policy"},
+    {"tool": "api_scanner", "target": "app", "expected": "unauthenticated user API"},
+    {"tool": "nmap", "target": "db", "expected": "Postgres port visible on internal network"},
+    {"tool": "nmap", "target": "redis", "expected": "Redis port visible on internal network"},
+    {"tool": "nikto", "target": "uploads", "expected": "directory listing enabled"},
+    {"tool": "nikto", "target": "admin", "expected": "exposed admin content"}
+  ]
+}

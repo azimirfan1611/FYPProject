@@ -56,8 +56,9 @@ def evict_old_scans():
     cutoff = (datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)).isoformat()
     with SCANS_LOCK:
         for sid, s in list(SCANS.items()):
+            completed = s.get("completed_at")
             if (s["status"] in ("complete", "error", "cancelled") and
-                    s.get("completed_at", "9999") < cutoff):
+                    completed and completed < cutoff):
                 s["report_html"] = None
                 s["findings"] = []
         while len(SCANS) > MAX_SCANS:
@@ -137,6 +138,11 @@ def _run(scan_id: str, url: str, report_dir: str, scan_cfg: dict):
     logger = _ScanLogger(scan_id)
 
     try:
+        # URL translation: localhost:8081 → edge proxy on shared network
+        if "127.0.0.1:8081" in url or "localhost:8081" in url:
+            url = url.replace("127.0.0.1:8081", "172.18.0.4").replace("localhost:8081", "172.18.0.4")
+            _safe_log(scan_id, f"[*] Translating localhost to edge proxy: {url}")
+        
         zap_url      = scan_cfg.get("zap_url",      os.environ.get("ZAP_URL",        "http://zap:8090"))
         zap_key      = scan_cfg.get("zap_key",      os.environ.get("ZAP_KEY",        ""))
         openai_key   = scan_cfg.get("openai_key",   os.environ.get("OPENAI_API_KEY", ""))

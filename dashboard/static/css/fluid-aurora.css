@@ -1,0 +1,33 @@
+/* Fluid Aurora Canvas */
+
+#fluid-aurora-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  display: block;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Ensure content appears above canvas */
+.aurora-bg,
+.particles,
+.hero,
+.section,
+nav {
+  position: relative;
+  z-index: 1;
+}
+
+/* Performance */
+@media (prefers-reduced-motion: reduce) {
+  #fluid-aurora-canvas {
+    animation: none;
+  }
+}

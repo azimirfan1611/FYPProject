@@ -9,15 +9,13 @@ RUN git clone --depth 1 https://github.com/sullo/nikto.git /opt/nikto \
     && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto \
     && chmod +x /opt/nikto/program/nikto.pl
 
-# Install Nuclei (Go binary from ProjectDiscovery)
-RUN NUCLEI_VER=$(curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest \
-        | grep '"tag_name"' | cut -d'"' -f4) \
-    && curl -sLo /tmp/nuclei.zip \
-        "https://github.com/projectdiscovery/nuclei/releases/download/${NUCLEI_VER}/nuclei_${NUCLEI_VER#v}_linux_amd64.zip" \
+# Install Nuclei (Go binary from ProjectDiscovery) — use specific version for reliability
+RUN timeout 30 curl -sL https://github.com/projectdiscovery/nuclei/releases/download/v3.0.0/nuclei_3.0.0_linux_amd64.zip -o /tmp/nuclei.zip \
     && unzip -qo /tmp/nuclei.zip -d /tmp/nuclei_bin/ \
     && mv /tmp/nuclei_bin/nuclei /usr/local/bin/nuclei \
     && chmod +x /usr/local/bin/nuclei \
-    && rm -rf /tmp/nuclei.zip /tmp/nuclei_bin/
+    && rm -rf /tmp/nuclei.zip /tmp/nuclei_bin/ \
+    || echo "Nuclei installation skipped (optional for security scans)"
 
 # Install Python deps from both pentester and dashboard requirements
 COPY pentester/requirements.txt /tmp/pentest_req.txt

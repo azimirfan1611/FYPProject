@@ -1,5 +1,3 @@
-version: '3.9'
-
 # ZAP API key — generate with: python -c "import secrets; print(secrets.token_hex(16))"
 # Set ZAP_KEY in your .env file or environment. Default shown here is INSECURE.
 x-zap-key: &zap-key ${ZAP_KEY:-autopentest_changeme_key}
@@ -38,7 +36,7 @@ services:
       -config api.addrs.addr.name=.*
       -config api.addrs.addr.regex=true
       -config api.key=${ZAP_KEY:-autopentest_changeme_key}
-      -config scanner.threadPerHost=5
+      -config scanner.threadPerHost=20
     environment:
       - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
     # ZAP port NOT exposed to host — accessible only within pentest-net
@@ -49,31 +47,37 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 1G
+          cpus: '2.0'
+          memory: 2G
     healthcheck:
       test: ["CMD", "curl", "-sf",
              "http://localhost:8090/JSON/core/view/version/?apikey=${ZAP_KEY:-autopentest_changeme_key}"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
+      interval: 10s
+      timeout: 5s
+      retries: 15
       start_period: 30s
 
-  msf:
-    image: metasploitframework/metasploit-framework:latest
-    container_name: msf
-    entrypoint: ["/bin/sh", "-c", "msfrpcd -P $$MSF_PASS -S false -a 0.0.0.0 -p 55553 -U msf"]
-    expose:
-      - "55553"
-    environment:
-      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
-    networks:
-      - pentest-net
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
+  # msf:
+  #   image: ghcr.io/rapid7/metasploit-framework:latest
+  #   container_name: msf
+  #   command: bash -c "msfrpcd -P $$MSF_PASS -S false -a 0.0.0.0 -p 55553 -U msf"
+  #   expose:
+  #     - "55553"
+  #   environment:
+  #     - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+  #   networks:
+  #     - pentest-net
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '1.0'
+  #         memory: 1G
+  #   healthcheck:
+  #     test: ["CMD", "nc", "-zv", "localhost", "55553"]
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 30s
 
   pentester:
     build:
@@ -84,9 +88,9 @@ services:
       - TARGET_URL=http://webapp:5000
       - ZAP_URL=http://zap:8090
       - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
-      - MSF_HOST=msf
-      - MSF_PORT=55553
-      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+      # - MSF_HOST=msf
+      # - MSF_PORT=55553
+      # - MSF_PASS=${MSF_PASS:-msfrpc_pass}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - REPORT_DIR=/reports
@@ -97,7 +101,7 @@ services:
       webapp:
         condition: service_healthy
       zap:
-        condition: service_healthy
+        condition: service_started
     networks:
       - pentest-net
 
@@ -111,15 +115,17 @@ services:
     environment:
       - ZAP_URL=http://zap:8090
       - ZAP_KEY=${ZAP_KEY:-autopentest_changeme_key}
-      - MSF_HOST=msf
-      - MSF_PORT=55553
-      - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+      # - MSF_HOST=msf
+      # - MSF_PORT=55553
+      # - MSF_PASS=${MSF_PASS:-msfrpc_pass}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
       - REPORT_DIR=/reports
       - ADMIN_USER=${ADMIN_USER:-admin}
       - ADMIN_PASS=${ADMIN_PASS:-changeme123!}
-      - JWT_SECRET=${JWT_SECRET:-}
+      - JWT_SECRET=${JWT_SECRET:-your_super_secret_jwt_key_change_in_production_12345678}
       - SHODAN_API_KEY=${SHODAN_API_KEY:-}
       - VIRUSTOTAL_API_KEY=${VIRUSTOTAL_API_KEY:-}
       - RATE_LIMIT_PER_MIN=${RATE_LIMIT_PER_MIN:-60}
@@ -134,7 +140,7 @@ services:
           cpus: '1.0'
           memory: 512M
     depends_on:
-      zap:
+      webapp:
         condition: service_healthy
 
 networks:

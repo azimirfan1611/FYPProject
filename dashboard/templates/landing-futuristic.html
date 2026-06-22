@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPenTest - Futuristic Security Platform</title>
+  
+  <!-- Futuristic Landing CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-futuristic.css') }}">
+  
+  <!-- Optional: GSAP for advanced scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+<body>
+  <!-- Animated Gradient Background -->
+  <div class="gradient-bg">
+    <div class="gradient-orb-1"></div>
+    <div class="gradient-orb-2"></div>
+    <div class="gradient-orb-3"></div>
+  </div>
+
+  <!-- Ambient Lighting -->
+  <div class="ambient-light ambient-light-1"></div>
+  <div class="ambient-light ambient-light-2"></div>
+
+  <!-- Mouse Follow Glow -->
+  <div class="mouse-glow"></div>
+
+  <!-- Floating Particles -->
+  <div class="particles-container"></div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Navigation Bar -->
+    <nav>
+      <div class="logo">AutoPenTest</div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#showcase">Showcase</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+      <div class="nav-cta">
+        <button class="btn btn-secondary" style="padding: 12px 24px; font-size: 0.9rem;">Sign In</button>
+        <button class="btn btn-primary" style="padding: 12px 28px; font-size: 0.9rem;">Get Started</button>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">🚀 The Future of Security Testing</div>
+        <h1>
+          Enterprise Security Testing <span class="gradient-text">Reimagined</span>
+        </h1>
+        <p class="hero-subtitle">
+          Harness the power of AI-driven vulnerability detection with real-time scanning, automated threat analysis, and enterprise-grade security insights.
+        </p>
+        <div class="hero-buttons">
+          <a href="/dashboard" class="btn btn-primary">Start Free Trial</a>
+          <button class="btn btn-secondary" onclick="document.querySelector('#features').scrollIntoView({ behavior: 'smooth' })">
+            Watch Demo
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+      <h2 class="section-title">Powerful <span style="color: #ff0096;">Features</span></h2>
+      <p class="section-subtitle">Everything you need for comprehensive security testing and threat detection</p>
+      
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">🎯</div>
+            <h3>Intelligent Scanning</h3>
+            <p>AI-powered vulnerability detection with advanced threat assessment across web, API, and infrastructure layers.</p>
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">📊</div>
+            <h3>Real-Time Dashboard</h3>
+            <p>Monitor active scans with live metrics, comprehensive insights, and detailed vulnerability tracking.</p>
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">⏰</div>
+            <h3>Scheduled Scanning</h3>
+            <p>Automate security testing with flexible scheduling, recurring scans, and intelligent task orchestration.</p>
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">🤖</div>
+            <h3>AI-Powered Insights</h3>
+            <p>Interactive chatbot provides guidance, security recommendations, and helps optimize your testing strategy.</p>
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">📈</div>
+            <h3>Advanced Analytics</h3>
+            <p>Deep trend analysis, vulnerability correlation, and actionable insights for continuous security improvement.</p>
+          </div>
+        </div>
+
+        <div class="feature-card reveal">
+          <div>
+            <div class="icon">🔐</div>
+            <h3>Enterprise Security</h3>
+            <p>JWT authentication, role-based access control, SOC 2 compliance, and enterprise-grade security protocols.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Showcase Section -->
+    <section class="section" id="showcase">
+      <h2 class="section-title">Our <span style="color: #ff0096;">Methodology</span></h2>
+      <p class="section-subtitle">4-Phase Shannon approach for comprehensive threat detection</p>
+      
+      <div class="showcase-grid">
+        <div class="showcase-item reveal">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔍</div>
+            <div>Reconnaissance</div>
+          </div>
+        </div>
+
+        <div class="showcase-item reveal">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🧪</div>
+            <div>Analysis</div>
+          </div>
+        </div>
+
+        <div class="showcase-item reveal">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">⚔️</div>
+            <div>Exploitation</div>
+          </div>
+        </div>
+
+        <div class="showcase-item reveal">
+          <div style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📋</div>
+            <div>Reporting</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="section">
+      <div class="features-grid">
+        <div class="feature-card reveal" style="text-align: center; min-height: auto;">
+          <div>
+            <div style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #ff0096 0%, #d946ef 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px;" class="stat-number">30+</div>
+            <h3 style="font-size: 1.1rem; color: #a0a0a0;">Vulnerability Scanners</h3>
+          </div>
+        </div>
+
+        <div class="feature-card reveal" style="text-align: center; min-height: auto;">
+          <div>
+            <div style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #ff0096 0%, #d946ef 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px;" class="stat-number">99</div>
+            <h3 style="font-size: 1.1rem; color: #a0a0a0;">Detection Accuracy %</h3>
+          </div>
+        </div>
+
+        <div class="feature-card reveal" style="text-align: center; min-height: auto;">
+          <div>
+            <div style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #ff0096 0%, #d946ef 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px;">25-60min</div>
+            <h3 style="font-size: 1.1rem; color: #a0a0a0;">Audit Duration</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section" id="testimonials">
+      <h2 class="section-title">Trusted by <span style="color: #ff0096;">Enterprises</span></h2>
+      <p class="section-subtitle">See what industry leaders say about AutoPenTest</p>
+      
+      <div class="testimonials-container">
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"AutoPenTest has transformed how we approach security testing. The AI-driven insights save us weeks of manual analysis."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">AJ</div>
+            <div class="author-info">
+              <h4>Alex Johnson</h4>
+              <p>Security Director, TechCorp</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"The real-time dashboard gives us complete visibility into our security posture. Essential for enterprise operations."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SM</div>
+            <div class="author-info">
+              <h4>Sarah Miller</h4>
+              <p>CISO, FinanceHub Inc.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal">
+          <p class="testimonial-text">"Outstanding support, outstanding product. We've reduced our security audit time by 70% since implementation."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RC</div>
+            <div class="author-info">
+              <h4>Robert Chen</h4>
+              <p>VP Engineering, CloudFirst</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section" id="pricing">
+      <h2 class="section-title">Simple <span style="color: #ff0096;">Pricing</span></h2>
+      <p class="section-subtitle">Choose the perfect plan for your security needs</p>
+      
+      <div class="pricing-grid">
+        <div class="pricing-card reveal">
+          <div>
+            <h4>Starter</h4>
+            <div class="price">$299<span class="period">/month</span></div>
+            <p>Perfect for growing teams</p>
+            <ul>
+              <li>Up to 5 scan targets</li>
+              <li>Basic reports</li>
+              <li>Email support</li>
+              <li>30-day history</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary">Get Started</button>
+        </div>
+
+        <div class="pricing-card featured reveal">
+          <div>
+            <h4>Professional</h4>
+            <div class="price">$999<span class="period">/month</span></div>
+            <p>Best for enterprises</p>
+            <ul>
+              <li>Unlimited targets</li>
+              <li>Advanced reports</li>
+              <li>Priority support</li>
+              <li>1-year history</li>
+              <li>AI chatbot</li>
+              <li>Custom compliance</li>
+            </ul>
+          </div>
+          <button class="btn btn-primary">Start Free Trial</button>
+        </div>
+
+        <div class="pricing-card reveal">
+          <div>
+            <h4>Enterprise</h4>
+            <div class="price">Custom</div>
+            <p>Tailored for large orgs</p>
+            <ul>
+              <li>Everything in Pro</li>
+              <li>Dedicated support</li>
+              <li>Custom integrations</li>
+              <li>On-premise option</li>
+              <li>SLA guarantees</li>
+            </ul>
+          </div>
+          <button class="btn btn-secondary">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="section" style="text-align: center; padding: 100px 2rem;">
+      <h2 class="section-title">Ready to Transform Your <span style="color: #ff0096;">Security</span>?</h2>
+      <p class="section-subtitle">Join 1000+ enterprises using AutoPenTest for advanced threat detection</p>
+      <div class="hero-buttons" style="justify-content: center;">
+        <a href="/dashboard" class="btn btn-primary">Start Free Trial</a>
+        <button class="btn btn-secondary" onclick="alert('Schedule a demo with our team')">Schedule Demo</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#showcase">Methodology</a></li>
+          <li><a href="#">Security</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API Docs</a></li>
+          <li><a href="#">Status</a></li>
+          <li><a href="#">Support</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Compliance</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 AutoPenTest. Futuristic Security Platform. All rights reserved. | Made with ✨ for enterprise security</p>
+    </div>
+  </footer>
+
+  <!-- Futuristic Landing JS -->
+  <script src="{{ url_for('static', filename='js/landing-futuristic.js') }}"></script>
+</body>
+</html>

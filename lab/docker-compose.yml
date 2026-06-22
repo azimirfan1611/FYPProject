@@ -1,0 +1,162 @@
+services:
+  edge:
+    build:
+      context: ./edge
+      dockerfile: Dockerfile
+    ports:
+      - "8081:80"
+      - "8443:443"
+    depends_on:
+      app:
+        condition: service_healthy
+      uploads:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+    networks:
+      - lab-net
+      - pentest-net
+
+  app:
+    build:
+      context: ../webapp
+      dockerfile: Dockerfile
+    environment:
+      - DB_PATH=/tmp/webapp.db
+      - FLASK_ENV=development
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: labdb
+      POSTGRES_USER: labuser
+      POSTGRES_PASSWORD: labpass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U labuser -d labdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - lab-net
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "no", "--requirepass", "redis123"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a redis123 ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - lab-net
+
+  uploads:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./uploads/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./uploads/content:/usr/share/nginx/html:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+  admin:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./admin/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./admin/content:/usr/share/nginx/html:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+  aux-ui:
+    build:
+      context: ./aux-ui
+      dockerfile: Dockerfile
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5002/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+  source-tree:
+    build:
+      context: ./source-tree
+      dockerfile: Dockerfile
+    volumes:
+      - ./source-tree/vulnerable-code:/app/vulnerable-code:ro
+    healthcheck:
+      test: ["CMD", "test", "-d", "/app/vulnerable-code"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+  leak-file:
+    build:
+      context: ./leak-file
+      dockerfile: Dockerfile
+    volumes:
+      - ./leak-file/credentials.txt:/credentials.txt:ro
+    healthcheck:
+      test: ["CMD", "test", "-f", "/credentials.txt"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - lab-net
+
+  dns-lab:
+    build:
+      context: ./dns-lab
+      dockerfile: Dockerfile
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    healthcheck:
+      test: ["CMD", "test", "-f", "/etc/dnsmasq.conf"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - lab-net
+
+  exploit-lab:
+    build:
+      context: ./exploit-lab
+      dockerfile: Dockerfile
+    ports:
+      - "22:22"
+      - "3389:3389"
+      - "5900:5900"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "127.0.0.1", "22"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+    networks:
+      - lab-net
+
+networks:
+  lab-net:
+    driver: bridge
+  pentest-net:
+    name: fypproject_pentest-net
+    external: true

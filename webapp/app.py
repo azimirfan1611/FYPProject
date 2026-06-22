@@ -165,10 +165,106 @@ def admin():
 @app.route("/api/user/<int:user_id>")
 def api_user(user_id):
     # VULNERABILITY: unauthenticated endpoint leaks full user record
-    user = g.db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
-    if not user:
-        return jsonify({"error": "not found"}), 404
-    return jsonify(dict(user))   # exposes password field
+    # VULNERABILITY: CORS not restricted → allows any origin
+    response = jsonify(dict(g.db.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone() or {}))
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+
+# ── CORS misconfiguration endpoint ────────────────────────────────────────────
+@app.route("/api/data")
+def api_data():
+    # VULNERABILITY: CORS allows any origin + methods
+    response = jsonify({"data": "sensitive", "token": "sk-12345abcde67890fghij"})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "*"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
+
+# ── SSTI endpoint ────────────────────────────────────────────────────────────────
+@app.route("/render", methods=["GET", "POST"])
+def render():
+    if request.method == "POST":
+        template_str = request.form.get("template", "")
+        try:
+            # VULNERABILITY: user template renders without sanitization
+            rendered = render_template(template_str)
+            return rendered
+        except Exception as e:
+            return f"Template Error: {str(e)}", 500
+    return '''
+    <html>
+    <body>
+    <h1>Template Renderer</h1>
+    <form method="post">
+    <textarea name="template" placeholder="{{config}}"></textarea>
+    <button type="submit">Render</button>
+    </form>
+    </body>
+    </html>
+    '''
+
+# ── XXE endpoint ──────────────────────────────────────────────────────────────────
+@app.route("/xml-parse", methods=["POST"])
+def xml_parse():
+    try:
+        import xml.etree.ElementTree as ET
+        xml_data = request.data
+        # VULNERABILITY: XML parser with XXE enabled by default
+        root = ET.fromstring(xml_data)
+        return jsonify({"parsed": True, "root": root.tag})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/xml-form")
+def xml_form():
+    return '''
+    <html>
+    <body>
+    <h1>XML Parser</h1>
+    <form method="post" action="/xml-parse">
+    <textarea name="xml" placeholder="<?xml version=\"1.0\"?><root/>" style="width:400px;height:200px;"></textarea>
+    <button type="submit">Parse</button>
+    </form>
+    </body>
+    </html>
+    '''
+
+# ── LDAP injection simulation ──────────────────────────────────────────────────
+@app.route("/ldap-search")
+def ldap_search():
+    search_term = request.args.get("search", "")
+    # VULNERABILITY: direct concatenation into LDAP filter
+    ldap_filter = f"(uid={search_term})"
+    # Simulate LDAP results
+    results = []
+    if "*" in search_term:
+        results = [{"uid": "admin"}, {"uid": "user1"}, {"uid": "user2"}]
+    return jsonify({"filter": ldap_filter, "results": results})
+
+# ── Open redirect ──────────────────────────────────────────────────────────────
+@app.route("/redirect")
+def redirect_page():
+    next_url = request.args.get("next", "/")
+    # VULNERABILITY: no URL validation on redirect
+    return redirect(next_url)
+
+# ── Weak password reset ────────────────────────────────────────────────────────
+@app.route("/reset-password/<token>")
+def reset_password(token):
+    # VULNERABILITY: token is predictable (just the user_id)
+    user_id = token  # token is supposed to be unpredictable
+    return jsonify({"reset_token": token, "user_id": user_id, "status": "valid"})
+
+# ── API key in headers ────────────────────────────────────────────────────────
+@app.route("/api-with-key")
+def api_with_key():
+    api_key = request.headers.get("X-API-Key", "")
+    if api_key == "secret-key-12345":
+        # VULNERABILITY: weak API key, exposed in logs
+        return jsonify({"authorized": True, "data": "premium content"})
+    return jsonify({"error": "unauthorized"}), 401
 
 if __name__ == "__main__":
     init_db()

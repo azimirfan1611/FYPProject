@@ -9,6 +9,7 @@
 |-------------|---------------------------------------------------------------------------------|
 | `webapp/`   | Intentionally vulnerable Flask web app (SQL injection, XSS, etc.)              |
 | `pentester/`| Automated scanner — standard sequential mode OR Shannon 4-phase AI orchestrator |
+| `lab/`      | Disposable validation stack with reverse proxy, TLS, uploads, admin, and truth map |
 | `reports/`  | Auto-generated HTML, JSON & Markdown pentest reports                            |
 
 ---
@@ -97,6 +98,18 @@ docker-compose up --build
 
 ### 4. View the Report
 Open `reports/report_<timestamp>.html` in your browser.
+
+---
+
+## Validation lab
+
+For a controlled target with known findings, run:
+
+```bash
+docker compose -f lab/docker-compose.yml up --build
+```
+
+Then point the scanner at `https://localhost:8443` or `http://localhost:8081` and compare against `lab/targets.json`.
 
 ---
 
@@ -215,6 +228,7 @@ pentest/
 │       ├── idor_scanner.py
 │       ├── ssrf_scanner.py      # SSRF detection ✨
 │       └── source_analyzer.py   # White-box analysis ✨
+├── lab/                     # Disposable scanner-validation target stack
 ├── reports/                # Standard mode output
 ├── audit-logs/             # Shannon mode output (workspaces)
 ├── repos/                  # Place target app repos here for white-box scan

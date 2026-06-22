@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoPenTest - Enterprise Security Scanner</title>
+  
+  <!-- Premium Landing CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-premium.css') }}">
+</head>
+<body>
+  <!-- Aurora Background -->
+  <div class="aurora-container">
+    <div class="aurora-blob aurora-blob-1"></div>
+    <div class="aurora-blob aurora-blob-2"></div>
+    <div class="aurora-blob aurora-blob-3"></div>
+    <div class="noise-overlay"></div>
+  </div>
+
+  <!-- Floating Particles -->
+  <div class="particles-container"></div>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-icon">🛡️</div>
+        <h1>
+          Advanced Security Testing <span class="italic">Reimagined</span>
+        </h1>
+        <p class="hero-subtitle">
+          Enterprise-grade penetration testing with AI-powered insights, real-time scanning, and automated vulnerability detection in seconds.
+        </p>
+        <div class="hero-buttons">
+          <a href="/dashboard" class="btn btn-primary">Start Testing Now</a>
+          <button class="btn btn-secondary" onclick="document.querySelector('.features').scrollIntoView({ behavior: 'smooth' })">Learn More</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section features">
+      <h2 class="section-title">
+        Powerful <span>Features</span>
+      </h2>
+      <div class="grid">
+        <div class="card scroll-reveal">
+          <div>
+            <h3>🎯 Intelligent Scanning</h3>
+            <p>AI-powered vulnerability detection with advanced analytics and real-time threat assessment across multiple security frameworks and protocols.</p>
+          </div>
+        </div>
+        
+        <div class="card scroll-reveal">
+          <div>
+            <h3>📊 Live Dashboard</h3>
+            <p>Monitor scans in real-time with comprehensive insights, detailed metrics, and interactive reporting capabilities.</p>
+          </div>
+        </div>
+        
+        <div class="card scroll-reveal">
+          <div>
+            <h3>⏰ Scheduled Scanning</h3>
+            <p>Automate security testing with flexible scheduling, recurring scans, and intelligent task management across your infrastructure.</p>
+          </div>
+        </div>
+        
+        <div class="card scroll-reveal">
+          <div>
+            <h3>🤖 AI Chatbot</h3>
+            <p>Interactive AI assistant provides guidance, answers security questions, and helps optimize your testing strategy.</p>
+          </div>
+        </div>
+        
+        <div class="card scroll-reveal">
+          <div>
+            <h3>📈 Advanced Analytics</h3>
+            <p>Detailed trend analysis, vulnerability tracking, and actionable insights for continuous security improvement.</p>
+          </div>
+        </div>
+        
+        <div class="card scroll-reveal">
+          <div>
+            <h3>🔐 Enterprise Grade</h3>
+            <p>Built for enterprises with JWT authentication, role-based access, and comprehensive security protocols.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section class="section">
+      <h2 class="section-title">
+        4-Phase <span>Shannon Methodology</span>
+      </h2>
+      <p style="text-align: center; color: #a0a0a0; margin-bottom: 60px; max-width: 700px; margin-left: auto; margin-right: auto;">
+        Our proven methodology combines industry-leading security practices with AI-driven automation for comprehensive threat detection.
+      </p>
+      <div class="methodology-grid">
+        <div class="phase-card">
+          <div class="phase-icon">🔍</div>
+          <h4>Reconnaissance</h4>
+          <p>Deep system analysis and information gathering across networks, applications, and infrastructure layers.</p>
+        </div>
+        
+        <div class="phase-card">
+          <div class="phase-icon">🧪</div>
+          <h4>Analysis</h4>
+          <p>Advanced vulnerability assessment and threat modeling using machine learning and behavioral analysis.</p>
+        </div>
+        
+        <div class="phase-card">
+          <div class="phase-icon">⚔️</div>
+          <h4>Exploitation</h4>
+          <p>Controlled exploitation to demonstrate real-world impact and security weaknesses in your systems.</p>
+        </div>
+        
+        <div class="phase-card">
+          <div class="phase-icon">📋</div>
+          <h4>Reporting</h4>
+          <p>Comprehensive, actionable security reports with remediation guidance and risk prioritization.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">30+</div>
+          <div class="stat-label">Vulnerability Scanners</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-number">99.8%</div>
+          <div class="stat-label">Detection Accuracy</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-number">25-60min</div>
+          <div class="stat-label">Standard Audit Time</div>
+        </div>
+        
+        <div class="stat-item">
+          <div class="stat-number">1000+</div>
+          <div class="stat-label">Enterprise Clients</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="section">
+      <h2 class="section-title">
+        Simple <span>Pricing</span>
+      </h2>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <h4>Starter</h4>
+          <div class="price">$299<span>/month</span></div>
+          <p style="color: #a0a0a0; margin-bottom: 30px;">Perfect for small teams</p>
+          <ul>
+            <li>Up to 5 scan targets</li>
+            <li>Basic vulnerability reports</li>
+            <li>Email support</li>
+            <li>30-day scan history</li>
+          </ul>
+          <button class="btn btn-secondary">Get Started</button>
+        </div>
+
+        <div class="pricing-card featured">
+          <h4>Professional</h4>
+          <div class="price">$999<span>/month</span></div>
+          <p style="color: #a0a0a0; margin-bottom: 30px;">Most popular for enterprises</p>
+          <ul>
+            <li>Unlimited scan targets</li>
+            <li>Advanced analytics & reporting</li>
+            <li>Priority support</li>
+            <li>1-year scan history</li>
+            <li>AI chatbot integration</li>
+            <li>Custom compliance reports</li>
+          </ul>
+          <button class="btn btn-primary">Start Free Trial</button>
+        </div>
+
+        <div class="pricing-card">
+          <h4>Enterprise</h4>
+          <div class="price">Custom</div>
+          <p style="color: #a0a0a0; margin-bottom: 30px;">For large organizations</p>
+          <ul>
+            <li>Everything in Professional</li>
+            <li>Dedicated support team</li>
+            <li>Custom integrations</li>
+            <li>On-premise deployment</li>
+            <li>SLA guarantees</li>
+          </ul>
+          <button class="btn btn-secondary">Contact Sales</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+      <h2 class="section-title">
+        Frequently Asked <span>Questions</span>
+      </h2>
+      <div class="faq-container">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>How long does a typical security audit take?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Standard audits take between 25-60 minutes depending on your infrastructure size and which scanning modules you enable. Enterprise-scale deployments may take longer.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Can AutoPenTest integrate with my existing security tools?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Yes! AutoPenTest has pre-built integrations with popular security platforms including Jira, Slack, PagerDuty, and custom webhooks via our API.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Is my data secure and private?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Absolutely. All scan data is encrypted in transit and at rest using AES-256. We comply with GDPR, SOC 2, and ISO 27001 standards.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Can I schedule automated scans?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Yes. Professional and Enterprise plans support unlimited scheduled scans with flexible frequency options (daily, weekly, monthly, custom).
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>What vulnerabilities does AutoPenTest detect?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Our 30+ specialized scanners detect OWASP Top 10 vulnerabilities, CVSS-rated threats, zero-days, misconfigurations, and business logic flaws across web, API, and infrastructure layers.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">
+            <span>Do you offer a free trial?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Yes! Professional and Enterprise plans come with a 14-day free trial. Starter plan users get $50 credit for their first month.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" style="text-align: center; padding: 100px 2rem;">
+      <h2 class="section-title">
+        Ready to Secure Your <span>Infrastructure</span>?
+      </h2>
+      <p style="color: #a0a0a0; margin-bottom: 40px; font-size: 1.1rem;">
+        Join 1000+ enterprises using AutoPenTest for comprehensive security testing.
+      </p>
+      <div class="hero-buttons" style="justify-content: center;">
+        <a href="/dashboard" class="btn btn-primary">Start Free Trial</a>
+        <button class="btn btn-secondary" onclick="alert('Demo scheduled!')">Schedule Demo</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2026 AutoPenTest. Enterprise Security Scanning Platform. All rights reserved.</p>
+  </footer>
+
+  <!-- Premium Landing JS -->
+  <script src="{{ url_for('static', filename='js/landing-premium.js') }}"></script>
+</body>
+</html>

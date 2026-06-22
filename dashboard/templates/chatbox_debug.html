@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbox Debug</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbox.css') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0e17;
+            color: #e5e7eb;
+            font-family: Arial, sans-serif;
+        }
+        .debug-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .debug-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+        }
+        h2 { color: #58a6ff; }
+        pre { background: #161b22; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .success { color: #3fb950; }
+        .error { color: #ff7b72; }
+        .launcher-preview {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 84px;
+            height: 84px;
+            background: red;
+            z-index: 9999;
+            display: grid;
+            place-items: center;
+            color: white;
+            border-radius: 24px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="debug-container">
+    <h1>🔧 Chatbox Debug Page</h1>
+    
+    <div class="debug-section">
+        <h2>CSS Loading Test</h2>
+        <p>CSS Variables:</p>
+        <pre id="css-vars"></pre>
+    </div>
+    
+    <div class="debug-section">
+        <h2>HTML Elements Check</h2>
+        <div id="element-check"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>JavaScript Console</h2>
+        <pre id="console-log"></pre>
+    </div>
+    
+    <div class="debug-section">
+        <h2>Launcher Position Test</h2>
+        <div class="launcher-preview">CHAT BOT</div>
+        <p id="launcher-info"></p>
+    </div>
+</div>
+
+<script>
+    // Capture console logs
+    const logs = [];
+    const originalLog = console.log;
+    console.log = function(...args) {
+        logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+        originalLog.apply(console, args);
+    };
+
+    // Test CSS variables
+    const root = getComputedStyle(document.documentElement);
+    document.getElementById('css-vars').textContent = `
+--chat-bg: ${root.getPropertyValue('--chat-bg')}
+--chat-launcher-color: ${root.getPropertyValue('--chat-accent')}
+    `.trim();
+
+    // Test elements
+    const elements = ['chat-sidebar', 'chat-launcher', 'chat-input', 'chat-messages'];
+    const elementCheck = document.getElementById('element-check');
+    elements.forEach(id => {
+        const el = document.getElementById(id);
+        const status = el ? `<span class="success">✓ Found</span>` : `<span class="error">✗ Missing</span>`;
+        elementCheck.innerHTML += `<p>#${id}: ${status}</p>`;
+    });
+
+    // Test launcher visibility
+    const launcher = document.getElementById('chat-launcher');
+    if (launcher) {
+        const computed = window.getComputedStyle(launcher);
+        document.getElementById('launcher-info').innerHTML = `
+            <strong>Launcher Computed Styles:</strong>
+            <pre>
+z-index: ${computed.zIndex}
+display: ${computed.display}
+position: ${computed.position}
+right: ${computed.right}
+bottom: ${computed.bottom}
+visibility: ${computed.visibility}
+opacity: ${computed.opacity}
+pointer-events: ${computed.pointerEvents}
+            </pre>
+        `;
+    }
+
+    // Log initialization
+    console.log('Debug page loaded');
+    console.log('DOM ready:', document.readyState);
+    
+    // Show logs
+    setTimeout(() => {
+        document.getElementById('console-log').textContent = logs.join('\n') || 'No logs yet';
+    }, 1000);
+</script>
+</body>
+</html>

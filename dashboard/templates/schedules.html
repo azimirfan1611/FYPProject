@@ -24,11 +24,11 @@
                     focus:outline-none focus:border-cyber-blue transition">
     </div>
     <div class="mb-4">
-      <label class="block text-gray-400 text-sm mb-1">Schedule (cron: minute hour day_of_week)</label>
-      <input type="text" name="cron" required placeholder="0 2 mon"
+      <label class="block text-gray-400 text-sm mb-1">Schedule</label>
+      <input type="text" name="cron" required placeholder="8 am daily"
              class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white
                     focus:outline-none focus:border-cyber-blue transition">
-      <p class="text-xs text-gray-600 mt-1">Examples: "0 2 mon" = Mon 2am, "0 8 *" = Daily 8am, "0 0 mon,fri" = Mon+Fri midnight</p>
+      <p class="text-xs text-gray-600 mt-1">Examples: "daily", "8 am daily", "2 pm Monday", "hourly", "10:30 am", "5 am weekdays"</p>
     </div>
     <button type="submit"
             class="bg-cyber-green text-black font-bold px-6 py-2 rounded-lg hover:bg-green-400 transition">
@@ -56,9 +56,42 @@
       <tr class="border-b border-gray-900 hover:bg-gray-900/50">
         <td class="py-3 pr-4 font-mono text-cyber-blue">{{ s.id }}</td>
         <td class="py-3 pr-4 text-white">{{ s.url }}</td>
-        <td class="py-3 pr-4 font-mono text-gray-300">{{ s.cron }}</td>
+        <td class="py-3 pr-4 font-mono text-gray-300">{{ s.get('display_format', s.cron) }}</td>
         <td class="py-3 pr-4 text-gray-500 text-xs">{{ s.last_run[:16] if s.last_run else 'Never' }}</td>
-        <td class="py-3">
+        <td class="py-3 flex gap-2">
+          <!-- View button - disabled if no scan -->
+          {% if s.get('last_scan_id') %}
+            <a href="/scan/{{ s.get('last_scan_id') }}"
+               class="text-xs bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-gray-300 transition cursor-pointer">
+              View
+            </a>
+          {% else %}
+            <span class="text-xs bg-gray-800 px-3 py-1 rounded text-gray-600 cursor-not-allowed opacity-50"
+                  title="No scan results yet">
+              View
+            </span>
+          {% endif %}
+           
+          <!-- Report button - disabled if no scan or scan incomplete -->
+          {% if s.get('last_scan_id') and s.get('report_ready') %}
+            <a href="/report?scan_id={{ s.get('last_scan_id') }}"
+               class="text-xs bg-blue-900 hover:bg-blue-800 px-3 py-1 rounded text-blue-300 transition cursor-pointer">
+              Report
+            </a>
+          {% else %}
+            <span class="text-xs bg-blue-950 px-3 py-1 rounded text-blue-600 cursor-not-allowed opacity-50"
+                  title="{% if not s.get('last_scan_id') %}No scan results{% else %}Report still generating...{% endif %}">
+              Report
+            </span>
+          {% endif %}
+           
+          <!-- Compare button - always enabled -->
+          <a href="/compare?schedule_id={{ s.id }}"
+             class="text-xs bg-purple-900 hover:bg-purple-800 px-3 py-1 rounded text-purple-300 transition">
+            Compare
+          </a>
+           
+          <!-- Delete button -->
           <form method="POST" action="/schedules/{{ s.id }}/delete" style="display:inline">
             {% if csrf_token is defined %}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{% endif %}
             <button type="submit" onclick="return confirm('Delete schedule {{ s.id }}?')"
