@@ -286,9 +286,10 @@ def login_page():
                 logger.info(f"Login attempt: user={u} ip={ip} success={u_ok and p_ok}")
                 if u_ok and p_ok:
                     session["token"] = _make_token(u)
-                    # Set default timezone if not already set
+                    # Set timezone to Singapore by default (most users are in Asia)
                     if 'timezone' not in session:
-                        session['timezone'] = request.form.get("timezone", "UTC")
+                        session['timezone'] = 'Asia/Singapore'
+                    session.modified = True
                     _clear_failed(u)
                     return redirect(url_for("index"))
                 error = "Invalid credentials"
@@ -300,12 +301,13 @@ def login_page():
 def set_timezone():
     """Set user's timezone from browser detection"""
     data = request.get_json() or {}
-    timezone = data.get('timezone', 'UTC')
+    timezone = data.get('timezone', 'Asia/Singapore')
     
     # Validate timezone
     try:
         pytz.timezone(timezone)
         session['timezone'] = timezone
+        session.modified = True  # Ensure session is saved
         logger.info(f"Timezone set for user: {timezone}")
         return jsonify({"success": True, "timezone": timezone})
     except Exception as e:

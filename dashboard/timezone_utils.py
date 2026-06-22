@@ -7,13 +7,13 @@ from datetime import datetime
 import pytz
 import os
 
-# Default timezone - can be overridden by user
-DEFAULT_TIMEZONE = os.environ.get("DEFAULT_TIMEZONE", "UTC")
+# Default timezone - can be overridden by user (Asia/Singapore is common)
+DEFAULT_TIMEZONE = os.environ.get("DEFAULT_TIMEZONE", "Asia/Singapore")
 
 def get_user_timezone(session_data=None, browser_tz=None):
     """
     Get user's timezone from session or browser detection.
-    Fallback order: session -> browser -> environment -> UTC
+    Fallback order: session -> browser -> environment -> Singapore
     """
     if session_data and session_data.get('timezone'):
         try:
@@ -33,7 +33,7 @@ def get_user_timezone(session_data=None, browser_tz=None):
         pytz.timezone(DEFAULT_TIMEZONE)
         return DEFAULT_TIMEZONE
     except pytz.exceptions.UnknownTimeZoneError:
-        return "UTC"
+        return "Asia/Singapore"
 
 
 def utc_to_local(utc_datetime_str, user_timezone=None):
