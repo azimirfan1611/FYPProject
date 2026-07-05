@@ -474,19 +474,50 @@ def download_sarif(scan_id):
 @app.route("/scan/<scan_id>/download/pdf")
 @login_required
 def download_pdf(scan_id):
+    """Download scan report as PDF - full HTML report converted to PDF"""
     with SCANS_LOCK:
         scan = SCANS.get(scan_id)
+    
     if not scan or not scan.get("report_html"):
         return "Report not ready", 404
+    
     try:
-        from weasyprint import HTML as WP
-        pdf = WP(string=scan["report_html"]).write_pdf()
-        return Response(pdf, mimetype="application/pdf",
-                        headers={"Content-Disposition": f"attachment; filename=report_{scan_id}.pdf"})
-    except ImportError:
-        return "PDF requires weasyprint (not installed)", 501
+        # First try to use a proper HTML to PDF converter
+        try:
+            # Try pdfkit with wkhtmltopdf (if available)
+            import pdfkit
+            pdf = pdfkit.from_string(scan["report_html"], False)
+            return Response(pdf, mimetype="application/pdf",
+                            headers={"Content-Disposition": f"attachment; filename=report_{scan_id}.pdf"})
+        except:
+            pass
+        
+        # Fallback: Use xhtml2pdf if available
+        try:
+            from xhtml2pdf import pisa
+            from io import BytesIO
+            
+            buffer = BytesIO()
+            pisa.CreatePDF(scan["report_html"], dest=buffer)
+            buffer.seek(0)
+            return Response(buffer.getvalue(), mimetype="application/pdf",
+                            headers={"Content-Disposition": f"attachment; filename=report_{scan_id}.pdf"})
+        except:
+            pass
+        
+        # Final fallback: Return the HTML report directly for download
+        # User can open in browser and use "Print to PDF" feature
+        return Response(scan["report_html"], mimetype="text/html",
+                        headers={"Content-Disposition": f"attachment; filename=report_{scan_id}.html"})
+    
     except Exception as e:
-        return f"PDF error: {e}", 500
+        logger.error(f"[!] PDF download error: {e}", exc_info=True)
+        try:
+            # Last resort: Return HTML file
+            return Response(scan["report_html"], mimetype="text/html",
+                            headers={"Content-Disposition": f"attachment; filename=report_{scan_id}.html"})
+        except:
+            return f"Error generating PDF: {str(e)[:200]}", 500
 
 @app.route("/scan/<scan_id>/cancel", methods=["POST"])
 @login_required
@@ -883,74 +914,100 @@ def debug_scheduler():
 @csrf.exempt
 def chat_api():
     """AI cybersecurity chatbot endpoint"""
-    if not _CHATBOT_AVAILABLE:
-        return jsonify({"error": "Chatbot not available", "response": "AI chatbot is not configured."}), 503
+    try:
+        if not _CHATBOT_AVAILABLE:
+            return jsonify({"error": "Chatbot not available", "response": "AI chatbot is not configured."}), 503
+        
+        data = request.get_json(silent=True) or {}
+        user_message = data.get("message", "").strip()
+        include_context = data.get("include_context", True)
+        
+        if not user_message:
+            return jsonify({"error": "Empty message", "response": "Please enter a question."}), 400
+        
+        # Rate limit chat requests (10 per minute per user)
+        ip = request.remote_addr or "unknown"
+        if not _check_rate(ip, "chat", 10):
+            return jsonify({
+                "error": "rate_limit",
+                "response": "Chat rate limit exceeded. Please wait a moment."
+            }), 429
+        
+        # Get chatbot and context
+        try:
+            chatbot = get_chatbot()
+            if not chatbot:
+                return jsonify({"error": "Chatbot not initialized", "response": "Chatbot failed to initialize. Check API keys."}), 503
+        except Exception as e:
+            logger.error(f"[!] Chatbot initialization failed: {e}")
+            return jsonify({"error": "Chatbot initialization failed", "response": f"Chatbot error: {str(e)}"}), 503
+        
+        # Load scan context if requested
+        scan_context = None
+        if include_context:
+            try:
+                context_mgr = get_chat_context(REPORT_DIR)
+                scan_context = context_mgr.get_latest_scan_context()
+            except Exception as e:
+                logger.warning(f"[!] Failed to load chat context: {e}")
+                scan_context = None
+            
+            # Also include current tasks/scans summary
+            try:
+                with SCANS_LOCK:
+                    all_scans = list(SCANS.values())
+                
+                running_scans = [s for s in all_scans if s["status"] == "running"]
+                completed_scans = [s for s in all_scans if s["status"] == "complete"]
+                
+                tasks_summary = f"\nCURRENT TASKS:\n"
+                tasks_summary += f"- Total Scans: {len(all_scans)}\n"
+                tasks_summary += f"- Running: {len(running_scans)}\n"
+                tasks_summary += f"- Completed: {len(completed_scans)}\n"
+                
+                if running_scans:
+                    tasks_summary += f"\nRUNNING SCANS:\n"
+                    for scan in running_scans[:5]:  # Show top 5
+                        tasks_summary += f"  • {scan['id']}: {scan['url']} ({scan.get('phase', 'unknown')})\n"
+                
+                if scan_context:
+                    scan_context = tasks_summary + "\n" + scan_context
+                else:
+                    scan_context = tasks_summary
+            except Exception as e:
+                logger.warning(f"[!] Failed to load scan summary: {e}")
+        
+        # Get user ID from session (for conversation history)
+        user_id = session.get("token", "default")[:16]  # Use token prefix as user ID
+        
+        # Get response from chatbot
+        try:
+            result = chatbot.chat(user_message, user_id=user_id, scan_context=scan_context)
+        except Exception as e:
+            logger.error(f"[!] Chatbot chat failed: {e}")
+            return jsonify({
+                "error": "Chat failed",
+                "response": f"Chatbot error: {str(e)[:200]}"
+            }), 500
+        
+        response_data = {
+            "response": result.get("response", "No response"),
+            "error": result.get("error"),
+            "sources": result.get("sources", []),
+            "is_cached": result.get("is_cached", False),
+            "rate_limit_remaining": 10,
+            "scan_intent": result.get("scan_intent", {})
+        }
+        
+        # Return 200 even if there was an error (error is in the response body)
+        return jsonify(response_data), 200
     
-    data = request.get_json(silent=True) or {}
-    user_message = data.get("message", "").strip()
-    include_context = data.get("include_context", True)
-    
-    if not user_message:
-        return jsonify({"error": "Empty message", "response": "Please enter a question."}), 400
-    
-    # Rate limit chat requests (10 per minute per user)
-    ip = request.remote_addr or "unknown"
-    if not _check_rate(ip, "chat", 10):
+    except Exception as e:
+        logger.error(f"[!] Unexpected chat error: {e}", exc_info=True)
         return jsonify({
-            "error": "rate_limit",
-            "response": "Chat rate limit exceeded. Please wait a moment."
-        }), 429
-    
-    # Get chatbot and context
-    chatbot = get_chatbot()
-    context_mgr = get_chat_context(REPORT_DIR)
-    
-    # Load scan context if requested
-    scan_context = None
-    if include_context:
-        scan_context = context_mgr.get_latest_scan_context()
-        
-        # Also include current tasks/scans summary
-        with SCANS_LOCK:
-            all_scans = list(SCANS.values())
-        
-        running_scans = [s for s in all_scans if s["status"] == "running"]
-        completed_scans = [s for s in all_scans if s["status"] == "complete"]
-        
-        tasks_summary = f"\nCURRENT TASKS:\n"
-        tasks_summary += f"- Total Scans: {len(all_scans)}\n"
-        tasks_summary += f"- Running: {len(running_scans)}\n"
-        tasks_summary += f"- Completed: {len(completed_scans)}\n"
-        
-        if running_scans:
-            tasks_summary += f"\nRUNNING SCANS:\n"
-            for scan in running_scans[:5]:  # Show top 5
-                tasks_summary += f"  • {scan['id']}: {scan['url']} ({scan.get('phase', 'unknown')})\n"
-        
-        if scan_context:
-            scan_context = tasks_summary + "\n" + scan_context
-        else:
-            scan_context = tasks_summary
-    
-    # Get user ID from session (for conversation history)
-    user_id = session.get("token", "default")[:16]  # Use token prefix as user ID
-    
-    # Get response from chatbot
-    result = chatbot.chat(user_message, user_id=user_id, scan_context=scan_context)
-    
-    response_data = {
-        "response": result["response"],
-        "error": result.get("error"),
-        "sources": result.get("sources", []),
-        "is_cached": result.get("is_cached", False),
-        "rate_limit_remaining": 10,
-        "scan_intent": result.get("scan_intent", {})
-    }
-    
-    if result.get("error"):
-        return jsonify(response_data), 500
-    
-    return jsonify(response_data)
+            "error": "Unexpected error",
+            "response": f"An unexpected error occurred: {str(e)[:200]}"
+        }), 500
 
 @app.route("/api/chat/clear", methods=["POST"])
 @login_required

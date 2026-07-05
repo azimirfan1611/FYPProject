@@ -1,0 +1,33 @@
+# VCS
+.git
+.gitignore
+
+# Build artifacts
+node_modules/
+npm-debug.log
+package-lock.json
+
+# Python
+__pycache__
+*.pyc
+.venv
+venv/
+
+# Logs
+*.log
+
+# Temporary
+*.tmp
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Docker
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+README.md

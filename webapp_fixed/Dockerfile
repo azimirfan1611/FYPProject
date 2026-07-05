@@ -8,8 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy only necessary app files
 COPY app.py database.py ./
 COPY templates/ templates/
+COPY static/ static/
 
 ENV FLASK_APP=app.py
-ENV FLASK_ENV=development
-EXPOSE 5000
+EXPOSE 5001
 CMD ["python", "app.py"]

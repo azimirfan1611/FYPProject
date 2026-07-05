@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}XML Parser{% endblock %}
+{% block content %}
+<h1>XML Parser</h1>
+<p>DOCTYPE/ENTITY declarations are rejected server-side (XXE fix).</p>
+<form method="post" action="/xml-parse">
+  <textarea name="xml" placeholder="&lt;root/&gt;" style="width:400px;height:200px;"></textarea>
+  <button type="submit">Parse</button>
+</form>
+{% endblock %}

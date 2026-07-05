@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Welcome to HardenedApp</h1>
+<p>A patched, security-hardened version of VulnApp used to demonstrate remediation.</p>
+<table>
+  <tr><th>Endpoint</th><th>Fix applied</th></tr>
+  <tr><td><a href="/login">/login</a></td><td>Parameterized query, hashed passwords, lockout, generic errors</td></tr>
+  <tr><td><a href="/search">/search</a></td><td>Parameterized query, auto-escaped output</td></tr>
+  <tr><td><a href="/comments">/comments</a></td><td>CSRF token, auto-escaped output</td></tr>
+  <tr><td><a href="/profile/1">/profile/&lt;id&gt;</a></td><td>Ownership/role check, no password exposure</td></tr>
+  <tr><td><a href="/ping">/ping</a></td><td>Host validation, no shell=True</td></tr>
+  <tr><td><a href="/files">/files</a></td><td>Canonical path check, directory whitelist</td></tr>
+  <tr><td><a href="/api/user/1">/api/user/&lt;id&gt;</a></td><td>Requires authentication, restricted CORS</td></tr>
+</table>
+{% endblock %}

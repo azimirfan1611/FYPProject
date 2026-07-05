@@ -1,0 +1,50 @@
+# Version control
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+.venv
+venv/
+
+# Node/npm
+node_modules/
+npm-debug.log
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
+.env.local
+
+# Build artifacts
+build/
+dist/
+*.zip
+
+# Reports & data
+reports/
+latest-reports/
+*.db
+*.sqlite
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+*.txt
+LICENSE

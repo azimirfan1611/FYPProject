@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Template Renderer{% endblock %}
+{% block content %}
+<h1>Template Renderer</h1>
+<p>User-supplied templates are no longer executed server-side (SSTI fix).</p>
+<form method="post">
+  <textarea name="template" placeholder="e.g. {{ '{{config}}' }}"></textarea>
+  <button type="submit">Render</button>
+</form>
+{% endblock %}

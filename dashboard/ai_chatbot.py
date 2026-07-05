@@ -270,6 +270,36 @@ class CybersecurityChatbot:
             "schedule": schedule_intent
         }
     
+    def detect_scan_intent(self, message: str) -> dict:
+        """
+        Detect if user wants to start a scan or schedule one
+        
+        Returns:
+            {
+                "has_urls": bool,
+                "urls": list,
+                "scan": bool,
+                "schedule": bool
+            }
+        """
+        urls = self.extract_urls(message)
+        message_lower = message.lower()
+        
+        # Check for scan keywords
+        scan_keywords = ["scan", "check", "test", "audit", "pentest", "penetration", "vulnerability", "analyze", "security test"]
+        has_scan_intent = any(kw in message_lower for kw in scan_keywords)
+        
+        # Check for schedule keywords
+        schedule_keywords = ["schedule", "recurring", "daily", "weekly", "monthly", "hourly", "every", "at ", "tomorrow", "next"]
+        has_schedule_intent = any(kw in message_lower for kw in schedule_keywords)
+        
+        return {
+            "has_urls": len(urls) > 0,
+            "urls": urls,
+            "scan": has_scan_intent and len(urls) > 0,
+            "schedule": has_schedule_intent and len(urls) > 0
+        }
+    
     def chat(self, user_message: str, user_id: str = "default", scan_context: str = None) -> dict:
         """
         Process user message and get AI response

@@ -669,8 +669,81 @@ pre {
   }
 }
 
+@keyframes pulse-dot-live {
+  0%, 100% {
+    opacity: 1;
+    color: #00ff41;
+    text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+  }
+  50% {
+    opacity: 0.5;
+    color: #00ff41;
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.4);
+  }
+}
+
+@keyframes scan-frame {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 65, 0.8));
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    y: 20px;
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    y: 220px;
+    opacity: 1;
+  }
+}
+
+@keyframes scan-line-animated {
+  0% {
+    transform: translateY(-190px);
+    opacity: 0.8;
+  }
+  25% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(160px);
+    opacity: 0.8;
+  }
+}
+
 .pulse-dot {
   animation: pulse-dot 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulse-dot-live {
+  animation: pulse-dot-live 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.scan-frame-container-animated {
+  animation: scan-frame 2s ease-in-out infinite;
+}
+
+.scan-frame-container {
+  animation: scan-frame 2s ease-in-out infinite;
+}
+
+.scan-line {
+  animation: scan-line 2.5s ease-in-out infinite;
+}
+
+.scan-line-animated {
+  animation: scan-line-animated 2.5s ease-in-out infinite;
 }
 
 /* Status Indicators */

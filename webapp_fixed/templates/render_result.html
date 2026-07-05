@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Template Result{% endblock %}
+{% block content %}
+<h1>Template Renderer</h1>
+<!-- FIXED: input is echoed back as escaped text, never evaluated as a template -->
+<p>You submitted (not executed):</p>
+<pre>{{ template_input }}</pre>
+<p><a href="/render">← Back</a></p>
+{% endblock %}

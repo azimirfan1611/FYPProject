@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Comments{% endblock %}
+{% block content %}
+<h2>Comments</h2>
+<form method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label>Your name</label>
+  <input type="text" name="author" value="">
+  <label>Comment</label>
+  <textarea name="body" rows="3"></textarea>
+  <input type="submit" value="Post">
+</form>
+<hr>
+{% for c in comments %}
+<div style="border-bottom:1px solid #eee;margin:10px 0;padding:10px">
+  <strong>{{ c.author }}</strong> <small>{{ c.created }}</small>
+  <!-- FIXED: body is auto-escaped by Jinja (no |safe) -->
+  <p>{{ c.body }}</p>
+</div>
+{% endfor %}
+{% endblock %}
