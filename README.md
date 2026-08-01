@@ -1,4 +1,4 @@
-# 🔐 AutoPenTest – Automated Web Application Penetration Testing
+#  AutoPenTest – Automated Web Application Penetration Testing
 
 > **⚠️ Educational Use Only** — This project contains intentional vulnerabilities.
 > Never deploy the web application to a production or public-facing environment.
@@ -14,7 +14,7 @@
 
 ---
 
-## 🤖 Shannon AI Penetration Testing Mode
+##  Shannon AI Penetration Testing Mode
 
 Inspired by the [Shannon AI pentesting framework](https://github.com/KeygraphHQ/shannon),
 this project now supports a **4-phase autonomous orchestrator** that emulates a human
@@ -197,8 +197,8 @@ python main.py --shannon
 | `dir_traversal.py`        | Path traversal on file viewer                      |
 | `command_injection.py`    | OS command injection on ping utility               |
 | `idor_scanner.py`         | Profile IDOR, unauthenticated API access           |
-| **`ssrf_scanner.py`** ✨  | SSRF via URL-accepting parameters (Shannon)        |
-| **`source_analyzer.py`** ✨| White-box static code analysis (Shannon)          |
+| **`ssrf_scanner.py`**   | SSRF via URL-accepting parameters (Shannon)        |
+| **`source_analyzer.py`** | White-box static code analysis (Shannon)          |
 
 ## Project Structure
 
@@ -215,8 +215,8 @@ pentest/
 │   ├── config.py           # Config & payloads
 │   ├── ai_analyzer.py      # Claude / OpenAI / rule-based analysis
 │   ├── report_generator.py # HTML, JSON reports (with PoC panel)
-│   ├── shannon_orchestrator.py  # 4-phase Shannon workflow ✨
-│   ├── workspace.py             # Checkpoint/resume system ✨
+│   ├── shannon_orchestrator.py  # 4-phase Shannon workflow 
+│   ├── workspace.py             # Checkpoint/resume system 
 │   ├── requirements.txt
 │   ├── Dockerfile
 │   └── scanners/
@@ -226,8 +226,8 @@ pentest/
 │       ├── dir_traversal.py
 │       ├── command_injection.py
 │       ├── idor_scanner.py
-│       ├── ssrf_scanner.py      # SSRF detection ✨
-│       └── source_analyzer.py   # White-box analysis ✨
+│       ├── ssrf_scanner.py      # SSRF detection 
+│       └── source_analyzer.py   # White-box analysis 
 ├── lab/                     # Disposable scanner-validation target stack
 ├── reports/                # Standard mode output
 ├── audit-logs/             # Shannon mode output (workspaces)
